@@ -3,6 +3,7 @@ ui\CustomerFrame$12.class
 utils\FileExporter.class
 models\IndividualCus.class
 ui\CustomerFrame$8.class
+ui\OrderFrame$3.class
 models\CorporateCus.class
 ui\MainFrame$1.class
 ui\CustomerFrame$1.class
@@ -15,11 +16,13 @@ ui\MainFrame$8.class
 dao\OrderModify.class
 ui\OrderFrame.class
 printstore_app\DBConnection.class
+ui\OrderFrame$2.class
 ui\CustomerFrame$11.class
 ui\CustomerFrame$2.class
 ui\CustomerFrame$4.class
 utils\UIUtils.class
 ui\EmployeeFrame$2.class
+ui\OrderDetailFrame$1.class
 ui\MainFrame.class
 models\Employee.class
 dao\ReportModify.class
@@ -34,6 +37,7 @@ ui\CustomerFrame$3.class
 ui\MainFrame$6.class
 ui\CustomerFrame$10.class
 ui\OrderFrame$1.class
+ui\OrderDetailFrame.class
 dao\CustomerModify.class
 ui\MainFrame$10.class
 ui\MainFrame$3.class

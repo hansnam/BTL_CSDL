@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import models.Product;
@@ -112,6 +113,20 @@ public class MainFrame extends javax.swing.JFrame {
             cartModel.addRow(new Object[]{stt, productName, 1, price});
         }
     }
+    
+    private double calculateTotalAmount() {
+        double total = 0;
+        for (int i = 0; i < cartModel.getRowCount(); i++) {
+            // Lấy tổng tiền từ cột 3 (Thành tiền)
+            try {
+                total += Double.parseDouble(cartModel.getValueAt(i, 3).toString());
+            } catch (NumberFormatException e) {
+                logger.log(Level.WARNING, "L\u1ed7i \u0111\u1ecbnh d\u1ea1ng s\u1ed1 \u1edf c\u1ed9t th\u00e0nh ti\u1ec1n, h\u00e0ng: {0}", i);
+            }
+        }
+        return total;
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -370,50 +385,83 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        // TODO add your handling code here:
+
+       
+        int quantityType = cartModel.getRowCount();
+
+        if (quantityType == 0) {
+            JOptionPane.showMessageDialog(this, "Giỏ hàng trống, không thể lưu!");
+            return;
+        }
+
+        String customerId = JOptionPane.showInputDialog(this,
+                "Vui lòng nhập Mã Khách Hàng :",
+                "Xác nhận đơn hàng (1/2)",
+                JOptionPane.PLAIN_MESSAGE);
+
+        if (customerId == null || customerId.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Mã Khách Hàng là bắt buộc! Đã huỷ đơn hàng.",
+                    "Huỷ bỏ", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String managerId = JOptionPane.showInputDialog(this,
+                "Vui lòng nhập Mã Nhân viên: ",
+                "Xác nhận đơn hàng (2/2)",
+                JOptionPane.PLAIN_MESSAGE);
+
+        if (managerId == null || managerId.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Mã Nhân viên/Quản lý là bắt buộc! Đã huỷ đơn hàng.",
+                    "Huỷ bỏ", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try {
-            javax.swing.table.DefaultTableModel cartModel = (javax.swing.table.DefaultTableModel) cartTable.getModel();
-            int rowCount = cartModel.getRowCount();
-            if (rowCount == 0) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Giỏ hàng trống, không thể lưu!");
+            String orderId = OrderModify.generateUniqueOrderId();
+            double totalAmount = calculateTotalAmount();
+            java.sql.Date orderDate = new java.sql.Date(System.currentTimeMillis());
+            String status = "Complete";
+
+            boolean orderSaved = OrderModify.insertOrder(orderId, customerId, totalAmount,
+                    orderDate, status, managerId, quantityType);
+
+            if (!orderSaved) {
+                JOptionPane.showMessageDialog(this, "Lỗi CSDL: Không thể lưu đơn hàng chính! \n(Kiểm tra Log CSDL)",
+                        "Lỗi CSDL", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Tạo mã đơn hàng ngẫu nhiên (ví dụ)
-            String orderId = OrderModify.generateUniqueOrderId();
-            double total = 0;
+            boolean allDetailsSaved = true;
+            for (int i = 0; i < quantityType; i++) { // Dùng lại biến 'quantityType'
+                String productName = cartModel.getValueAt(i, 1).toString();
+                int quantity = Integer.parseInt(cartModel.getValueAt(i, 2).toString());
+                String productId = ProductModify.getProductIdByName(productName);
 
-            // Định dạng ngày giờ kiểu dd/MM/yyyy HH:mm
-            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            String ngayLap = java.time.LocalDateTime.now().format(formatter);
-
-            // Ghi đơn hàng ra file hóa đơn
-            java.io.File file = new java.io.File("hoadon_" + orderId + ".txt");
-            try (java.io.PrintWriter writer = new java.io.PrintWriter(file)) {
-                writer.println("======== HÓA ĐƠN BÁN HÀNG ========");
-                writer.println("Mã hóa đơn: " + orderId);
-                writer.println("Ngày lập: " + ngayLap);
-                writer.println("----------------------------------");
-                writer.printf("%-5s %-25s %-10s %-15s\n", "STT", "Tên sản phẩm", "Số lượng", "Thành tiền");
-
-                for (int i = 0; i < rowCount; i++) {
-                    String name = cartModel.getValueAt(i, 1).toString();
-                    int qty = Integer.parseInt(cartModel.getValueAt(i, 2).toString());
-                    double price = Double.parseDouble(cartModel.getValueAt(i, 3).toString());
-                    total += price;
-
-                    writer.printf("%-5d %-25s %-10d %-15.0f\n", i + 1, name, qty, price);
+                if (productId == null) {
+                    logger.log(Level.WARNING, "Kh\u00f4ng t\u00ecm th\u1ea5y ProductID cho t\u00ean: {0}. B\u1ecf qua.", productName);
+                    allDetailsSaved = false;
+                    continue;
                 }
 
-                writer.println("----------------------------------");
-                writer.printf("TỔNG CỘNG: %.0f VND\n", total);
-                writer.println("==================================");
+                if (!OrderModify.insertOrderDetail(orderId, productId, quantity)) {
+                    allDetailsSaved = false;
+                    logger.severe(() -> "Lỗi CSDL khi lưu chi tiết: " + orderId + " - " + productId);
+                }
             }
 
-            javax.swing.JOptionPane.showMessageDialog(this, "Đơn hàng đã được lưu thành công!\nFile: " + file.getAbsolutePath());
-            cartModel.setRowCount(0); // Xóa giỏ hàng sau khi lưu
+            if (allDetailsSaved) {
+                JOptionPane.showMessageDialog(this, "Đã lưu đơn hàng " + orderId + " (NV: " + managerId + ") vào CSDL thành công!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Đơn hàng " + orderId + " đã được lưu,"
+                        + " NHƯNG một số chi tiết sản phẩm có thể đã bị lỗi.",
+                        "Lỗi một phần", JOptionPane.WARNING_MESSAGE);
+            }
+
+            cartModel.setRowCount(0); // Xóa giỏ hàng
+
         } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Lỗi khi lưu đơn hàng: " + e.getMessage());
+            logger.log(Level.SEVERE, "Lỗi nghiêm trọng khi lưu đơn hàng", e);
+            JOptionPane.showMessageDialog(this, "Lỗi nghiêm trọng khi lưu đơn hàng: " + e.getMessage());
         }
     }//GEN-LAST:event_saveBtnActionPerformed
 
@@ -432,7 +480,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
-        // new ReceiptFrame().setVisible(true);
+        new OrderFrame().setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed

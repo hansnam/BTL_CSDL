@@ -1,5 +1,4 @@
 /* Hans Nam */
-
 package dao;
 
 import java.sql.Connection;
@@ -23,8 +22,7 @@ public class ProductModify {
             sql += " WHERE ProductName LIKE ?";
         }
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             if (keyword != null && !keyword.isEmpty()) {
                 ps.setString(1, "%" + keyword + "%");
@@ -51,8 +49,7 @@ public class ProductModify {
     // 🔹 Thêm sản phẩm mới
     public static void insert(Product product) {
         String sql = "INSERT INTO products(ProductID, ProductName, Price, Descriptions) VALUES (?, ?, ?, ?)";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, product.getP_id());
             ps.setString(2, product.getP_name());
@@ -68,8 +65,7 @@ public class ProductModify {
     // 🔹 Cập nhật thông tin sản phẩm
     public static void update(Product product) {
         String sql = "UPDATE products SET ProductName = ?, Price = ?, Descriptions = ? WHERE ProductID = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, product.getP_name());
             ps.setDouble(2, product.getP_price());
@@ -82,11 +78,10 @@ public class ProductModify {
         }
     }
 
-    // 🔹 Xóa sản phẩm
+    // Xóa sản phẩm
     public static void delete(String productId) {
         String sql = "DELETE FROM products WHERE ProductID = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, productId);
             ps.executeUpdate();
@@ -94,4 +89,38 @@ public class ProductModify {
             Logger.getLogger(ProductModify.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public static String getProductIdByName(String productName) {
+        String productId = null;
+        String sql = "SELECT ProductID FROM products WHERE ProductName = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, productName);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    productId = rs.getString("ProductID");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productId;
+    }
+
+    public static double getProductPriceById(String productId) {
+        String sql = "SELECT Price FROM products WHERE ProductID = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, productId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("Price");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

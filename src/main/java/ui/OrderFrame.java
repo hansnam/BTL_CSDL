@@ -4,6 +4,16 @@
  */
 package ui;
 
+import javax.swing.table.DefaultTableModel;
+import dao.OrderModify;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.logging.Level;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Dell
@@ -11,12 +21,46 @@ package ui;
 public class OrderFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(OrderFrame.class.getName());
-
+    
+    DefaultTableModel tableModel;
     /**
      * Creates new form OrderFrame
      */
     public OrderFrame() {
         initComponents();
+        
+        // 1. Lấy model từ JTable
+        tableModel = (DefaultTableModel) orderTable.getModel();
+        
+        // 2. Tải tất cả dữ liệu lên JTable khi cửa sổ được tạo
+        loadAllOrders();
+        
+        // 3. Đặt cửa sổ ra giữa màn hình
+        setLocationRelativeTo(null);
+        
+    }
+    private void loadAllOrders() {
+        // Xóa dữ liệu cũ (nếu có)
+        tableModel.setRowCount(0);
+
+        // Lấy 6 cột dữ liệu từ DAO (Phương thức đã tạo ở Bước 1)
+        List<Object[]> orderList = OrderModify.getAllOrdersForTable();
+
+        if (orderList.isEmpty()) {
+            logger.warning("Không tìm thấy hóa đơn nào trong CSDL.");
+            return;
+        }
+        
+        // Duyệt qua danh sách dữ liệu và thêm vào JTable (7 cột)
+        else {
+            for (Object[] row : orderList) {
+                
+                tableModel.addRow(row);
+            }
+
+            // Thêm hàng hoàn chỉnh vào JTable
+            // tableModel.addRow(Row);
+        }
     }
 
     /**
@@ -29,30 +73,53 @@ public class OrderFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        receiptBtn = new javax.swing.JButton();
+        orderTable = new javax.swing.JTable();
+        issueBtn = new javax.swing.JButton();
+        detailBtn = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("QUẢN LÝ HOÁ ĐƠN");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        orderTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "STT", "Mã đơn hàng", "Mã khách hàng", "Số loại sản phẩm", "Tổng tiền", "Ngày đặt hàng", "Trạng thái thanh toán"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
 
-        receiptBtn.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        receiptBtn.setText("Xuất hoá đơn");
-        receiptBtn.addActionListener(new java.awt.event.ActionListener() {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(orderTable);
+        if (orderTable.getColumnModel().getColumnCount() > 0) {
+            orderTable.getColumnModel().getColumn(0).setResizable(false);
+            orderTable.getColumnModel().getColumn(1).setResizable(false);
+            orderTable.getColumnModel().getColumn(2).setResizable(false);
+            orderTable.getColumnModel().getColumn(3).setResizable(false);
+            orderTable.getColumnModel().getColumn(4).setResizable(false);
+            orderTable.getColumnModel().getColumn(5).setResizable(false);
+            orderTable.getColumnModel().getColumn(6).setResizable(false);
+        }
+
+        issueBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        issueBtn.setText("Xuất hoá đơn");
+        issueBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                receiptBtnActionPerformed(evt);
+                issueBtnActionPerformed(evt);
+            }
+        });
+
+        detailBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        detailBtn.setText("Chi tiết hoá đơn");
+        detailBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                detailBtnActionPerformed(evt);
             }
         });
 
@@ -61,10 +128,15 @@ public class OrderFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(receiptBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(detailBtn)
+                        .addGap(78, 78, 78)
+                        .addComponent(issueBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(38, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -72,17 +144,150 @@ public class OrderFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(64, 64, 64)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
-                .addComponent(receiptBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(issueBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(detailBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(41, 41, 41))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void receiptBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_receiptBtnActionPerformed
+    private void detailBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_receiptBtnActionPerformed
+        int selectedRow = orderTable.getSelectedRow();
+        
+        // Kiểm tra xem người dùng đã chọn hàng nào chưa
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, 
+                    "Vui lòng chọn một hoá đơn để xem chi tiết.", 
+                    "Chưa chọn hoá đơn", 
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Lấy Mã đơn hàng (OrderID) từ cột 1 (vì cột 0 là STT)
+        String orderId = tableModel.getValueAt(selectedRow, 1).toString();
+        
+        // Mở cửa sổ OrderDetailFrame và truyền orderId vào
+        OrderDetailFrame detailFrame = new OrderDetailFrame(orderId);
+        detailFrame.setVisible(true);
+        // Đặt vị trí của cửa sổ chi tiết ở giữa cửa sổ hiện tại (OrderFrame)
+        detailFrame.setLocationRelativeTo(this);
+    }//GEN-LAST:event_detailBtnActionPerformed
+
+    private void issueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_issueBtnActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = orderTable.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, 
+                    "Vui lòng chọn một hoá đơn để xuất file.", 
+                    "Chưa chọn hoá đơn", 
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Lấy thông tin từ hàng đã chọn
+        String orderId = tableModel.getValueAt(selectedRow, 1).toString();
+        String customerId = tableModel.getValueAt(selectedRow, 2).toString();
+        String totalAmount = tableModel.getValueAt(selectedRow, 4).toString();
+        String orderDate = tableModel.getValueAt(selectedRow, 5).toString();
+
+        // 1. Tạo thư mục "hoá đơn" nếu chưa tồn tại
+        String dirPath = "hoá đơn";
+        try {
+            Files.createDirectories(Paths.get(dirPath));
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Không thể tạo thư mục: " + dirPath, e);
+            JOptionPane.showMessageDialog(this, 
+                    "Lỗi khi tạo thư mục: " + e.getMessage(), 
+                    "Lỗi I/O", 
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // 2. Tạo tên file duy nhất
+        String filePath = dirPath + "/HoaDon_" + orderId + ".txt";
+
+        // 3. Ghi file (sử dụng try-with-resources để tự động đóng file)
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, java.nio.charset.StandardCharsets.UTF_8))) {
+            
+            // (Thêm java.nio.charset.StandardCharsets.UTF_8 để đảm bảo ghi Tiếng Việt đúng)
+
+
+            writer.write("==========   HOÁ ĐƠN BÁN HÀNG   =========="); writer.newLine();
+            writer.newLine();
+            writer.write("Mã hoá đơn: " + orderId); writer.newLine();
+            writer.write("Mã khách hàng: " + customerId); writer.newLine();
+            writer.write("Ngày đặt: " + orderDate); writer.newLine();
+            writer.newLine();
+            writer.write("--------------------------------------------------"); // Kéo dài separator
+            writer.newLine();
+            writer.write("CHI TIẾT SẢN PHẨM"); writer.newLine();
+            writer.write("--------------------------------------------------"); writer.newLine();
+            
+            // === THAY ĐỔI 1: CẬP NHẬT HEADER (Thêm STT) ===
+            // Định dạng: STT (4 ký tự), Tên SP (20), Số lượng (10), Giá (10)
+            writer.write(String.format("%-4s  %-20s  %-10s  %-10s  %-10s", "STT", "Tên SP", "Số lượng", "Giá", "Thành tiền"));
+            writer.newLine();
+            writer.write("--------------------------------------------------"); // Kéo dài separator
+            writer.newLine();
+
+            // Lấy chi tiết sản phẩm từ CSDL
+            List<Object[]> details = OrderModify.getOrderDetailForTable(orderId);
+            double calculatedTotal = 0.0;
+          
+            for (int i = 0; i < details.size(); i++) {
+                
+                Object[] item = details.get(i); // Lấy item theo index
+                int stt = i + 1; // Tạo STT
+                
+              
+                String tenSP = item[1].toString();
+                String soLuong = item[3].toString(); 
+                String dongia = item[2].toString();
+                String tongtien = item[4].toString();
+                
+                try {
+                    calculatedTotal += (Double) item[4];
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "L\u1ed7i khi c\u1ed9ng d\u1ed3n t\u1ed5ng ti\u1ec1n: {0}", e.getMessage());
+                }
+                
+                // Giới hạn tên SP
+                if (tenSP.length() > 20) {
+                    tenSP = tenSP.substring(0, 17) + "...";
+                }
+                
+                writer.write(String.format("%-4d  %-20s  %-10s  %-10s  %-10s", stt, tenSP, soLuong, dongia, tongtien));
+                writer.newLine();
+            }
+            
+            writer.newLine();
+            writer.write("=================================================="); // Kéo dài separator
+            writer.newLine();
+            writer.write("Tổng tiền: " + calculatedTotal + " VND"); writer.newLine();
+            writer.write("=================================================="); // Kéo dài separator
+            writer.newLine();
+            writer.write("Cảm ơn quý khách!"); writer.newLine();
+
+            // 4. Thông báo thành công
+            JOptionPane.showMessageDialog(this, 
+                    "Đã xuất hoá đơn thành công!\nĐường dẫn: " + filePath, 
+                    "Xuất file thành công", 
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Không thể ghi file: " + filePath, e);
+            JOptionPane.showMessageDialog(this, 
+                    "Lỗi khi ghi file: " + e.getMessage(), 
+                    "Lỗi I/O", 
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }//GEN-LAST:event_issueBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -110,8 +315,9 @@ public class OrderFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton detailBtn;
+    private javax.swing.JButton issueBtn;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JButton receiptBtn;
+    private javax.swing.JTable orderTable;
     // End of variables declaration//GEN-END:variables
 }
