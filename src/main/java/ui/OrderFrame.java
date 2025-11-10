@@ -4,18 +4,11 @@
  */
 package ui;
 
+import utils.invoiceLayout;
 import dao.CustomerModify;
 import javax.swing.table.DefaultTableModel;
 import dao.OrderModify;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.logging.Level;
 import javax.swing.JOptionPane;
 /**
  *
@@ -70,9 +63,10 @@ public class OrderFrame extends javax.swing.JFrame {
         orderTable = new javax.swing.JTable();
         issueBtn = new javax.swing.JButton();
         detailBtn = new javax.swing.JButton();
+        searchBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("QUẢN LÝ HOÁ ĐƠN");
+        setTitle("QUẢN LÝ ĐƠN HÀNG");
 
         orderTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -117,29 +111,42 @@ public class OrderFrame extends javax.swing.JFrame {
             }
         });
 
+        searchBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        searchBtn.setText("Tìm kiếm đơn hàng");
+        searchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(17, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(678, 678, 678)
+                        .addComponent(searchBtn)
+                        .addGap(63, 63, 63)
                         .addComponent(detailBtn)
-                        .addGap(34, 34, 34)
-                        .addComponent(issueBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(38, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(issueBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(33, 33, 33))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(64, 64, 64)
+                .addGap(43, 43, 43)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(49, 49, 49)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(detailBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(issueBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(issueBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -211,125 +218,56 @@ public class OrderFrame extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
+    }//GEN-LAST:event_issueBtnActionPerformed
 
+    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
+        // TODO add your handling code here:
+        // 1. Hiển thị hộp thoại nhập liệu và lấy giá trị nhập vào
+        String searchText = JOptionPane.showInputDialog(this,
+                "Vui lòng nhập mã đơn hàng cần tìm (hoặc * để hiển thị tất cả)", // Nội dung thông báo
+                "Tìm kiếm đơn hàng", // Tiêu đề hộp thoại
+                JOptionPane.QUESTION_MESSAGE);
 
-        
-        /*
-        int selectedRow = orderTable.getSelectedRow();
+        // Kiểm tra nếu người dùng nhấn Cancel (hủy) hoặc đóng hộp thoại (searchText sẽ là null)
+        if (searchText == null) {
+            return;
+        }
 
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, 
-                    "Vui lòng chọn một hoá đơn để xuất file.", 
-                    "Chưa chọn hoá đơn", 
+        // Loại bỏ khoảng trắng (trim) sau khi người dùng nhập
+        searchText = searchText.trim();
+
+        // 2. Xử lý logic tìm kiếm
+        if (searchText.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Mã đơn hàng không được để trống.",
+                    "Thiếu thông tin",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        
-        // Lấy thông tin từ hàng đã chọn
-        String orderId = tableModel.getValueAt(selectedRow, 1).toString();
-        String customerId = tableModel.getValueAt(selectedRow, 2).toString();
-        String totalAmount = tableModel.getValueAt(selectedRow, 4).toString();
-        String orderDate = tableModel.getValueAt(selectedRow, 5).toString();
 
-        //Tạo thư mục "hoá đơn" nếu chưa tồn tại
-        
-        String dirPath = "hoá đơn";
-        try {
-            Files.createDirectories(Paths.get(dirPath));
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Không thể tạo thư mục: " + dirPath, e);
-            JOptionPane.showMessageDialog(this, 
-                    "Lỗi khi tạo thư mục: " + e.getMessage(), 
-                    "Lỗi I/O", 
-                    JOptionPane.ERROR_MESSAGE);
+        // Nếu nhập dấu * thì hiển thị lại toàn bộ danh sách
+        if (searchText.equals("*")) {
+            loadAllOrders();
             return;
         }
-        
-        //Tạo tên file duy nhất
-        String filePath = dirPath + "/HoaDon_" + orderId + ".txt";
 
-        //Ghi file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, java.nio.charset.StandardCharsets.UTF_8))) {
-            
-            // (Thêm java.nio.charset.StandardCharsets.UTF_8 để đảm bảo ghi Tiếng Việt đúng)
-            // Lấy thời gian hệ thống hiện tại
-            LocalDateTime now = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
-            String formattedTime = now.format(formatter);
+        // Xóa dữ liệu cũ trong bảng
+        tableModel.setRowCount(0);
 
+        // Gọi phương thức tìm kiếm trong OrderModify
+        List<Object[]> searchResult = OrderModify.findOrderById(searchText);
 
-            writer.write("==========   HOÁ ĐƠN BÁN HÀNG   =========="); writer.newLine();
-            writer.newLine();
-            writer.write("Mã hoá đơn: " + orderId); writer.newLine();
-            writer.write("Mã khách hàng: " + customerId); writer.newLine();
-            writer.write("Ngày đặt hàng: " + orderDate); writer.newLine();
-            writer.write("Thời gian xuất hoá đơn: " + formattedTime); writer.newLine();
-            writer.newLine();
-            writer.write("--------------------------------------------------"); // Kéo dài separator
-            writer.newLine();
-            writer.write("CHI TIẾT SẢN PHẨM"); writer.newLine();
-            writer.write("--------------------------------------------------"); writer.newLine();
-            
-            
-            writer.write(String.format("%-4s  %-20s  %-10s  %-10s  %-10s", "STT", "Tên SP", "Số lượng", "Giá", "Thành tiền"));
-            writer.newLine();
-            writer.write("--------------------------------------------------"); // Kéo dài separator
-            writer.newLine();
-
-           
-            List<Object[]> details = OrderModify.getOrderDetailForTable(orderId);
-            double calculatedTotal = 0.0;
-          
-            for (int i = 0; i < details.size(); i++) {
-                
-                Object[] item = details.get(i);
-                int stt = i + 1;
-                
-              
-                String tenSP = item[1].toString();
-                String soLuong = item[3].toString(); 
-                String dongia = item[2].toString();
-                String tongtien = item[4].toString();
-                
-                try {
-                    calculatedTotal += (Double) item[4];
-                } catch (Exception e) {
-                    logger.log(Level.WARNING, "L\u1ed7i khi c\u1ed9ng d\u1ed3n t\u1ed5ng ti\u1ec1n: {0}", e.getMessage());
-                }
-                
-                // Giới hạn tên SP
-                if (tenSP.length() > 20) {
-                    tenSP = tenSP.substring(0, 17) + "...";
-                }
-                
-                writer.write(String.format("%-4d  %-20s  %-10s  %-10s  %-10s", stt, tenSP, soLuong, dongia, tongtien));
-                writer.newLine();
-            }
-            
-            writer.newLine();
-            writer.write("=================================================="); 
-            writer.newLine();
-            writer.write("Tổng tiền: " + calculatedTotal + " VND"); writer.newLine();
-            writer.write("=================================================="); 
-            writer.newLine();
-            writer.write("Cảm ơn quý khách!"); writer.newLine();
-
-            
-            JOptionPane.showMessageDialog(this, 
-                    "Đã xuất hoá đơn thành công!\nĐường dẫn: " + filePath, 
-                    "Xuất file thành công", 
+        if (searchResult == null || searchResult.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Không tìm thấy đơn hàng với mã: " + searchText,
+                    "Kết quả tìm kiếm",
                     JOptionPane.INFORMATION_MESSAGE);
-
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Không thể ghi file: " + filePath, e);
-            JOptionPane.showMessageDialog(this, 
-                    "Lỗi khi ghi file: " + e.getMessage(), 
-                    "Lỗi I/O", 
-                    JOptionPane.ERROR_MESSAGE);
+        } else {
+            for (Object[] row : searchResult) {
+                tableModel.addRow(row);
+            }
         }
-        */
-    }//GEN-LAST:event_issueBtnActionPerformed
+    }//GEN-LAST:event_searchBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -361,5 +299,6 @@ public class OrderFrame extends javax.swing.JFrame {
     private javax.swing.JButton issueBtn;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable orderTable;
+    private javax.swing.JButton searchBtn;
     // End of variables declaration//GEN-END:variables
 }

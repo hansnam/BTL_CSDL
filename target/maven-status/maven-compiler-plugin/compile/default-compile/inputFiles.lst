@@ -2,12 +2,12 @@ D:\PrintStore_App\src\main\java\dao\OrderModify.java
 D:\PrintStore_App\src\main\java\ui\ReportFrame.java
 D:\PrintStore_App\src\main\java\models\CorporateCus.java
 D:\PrintStore_App\src\main\java\models\Customer.java
+D:\PrintStore_App\src\main\java\models\Report.java
 D:\PrintStore_App\src\main\java\ui\OrderDetailFrame.java
 D:\PrintStore_App\src\main\java\models\Manager.java
 D:\PrintStore_App\src\main\java\dao\ProductModify.java
 D:\PrintStore_App\src\main\java\models\Employee.java
 D:\PrintStore_App\src\main\java\models\Product.java
-D:\PrintStore_App\src\main\java\ui\invoiceLayout.java
 D:\PrintStore_App\src\main\java\ui\EmployeeFrame.java
 D:\PrintStore_App\src\main\java\dao\CustomerModify.java
 D:\PrintStore_App\src\main\java\ui\ProductFrame.java
@@ -23,7 +23,9 @@ D:\PrintStore_App\src\main\java\dao\IndividualCustomerModify.java
 D:\PrintStore_App\src\main\java\dao\ManagerModify.java
 D:\PrintStore_App\src\main\java\ui\MainFrame.java
 D:\PrintStore_App\src\main\java\dao\StaffModify.java
+D:\PrintStore_App\src\main\java\utils\invoiceLayout.java
 D:\PrintStore_App\src\main\java\printstore_app\Main.java
 D:\PrintStore_App\src\main\java\models\OrderDetail.java
 D:\PrintStore_App\src\main\java\dao\CorporateCustomerModify.java
 D:\PrintStore_App\src\main\java\dao\ReportModify.java
+D:\PrintStore_App\src\main\java\utils\reportLayout.java

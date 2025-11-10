@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
 import models.Order;
 import models.OrderDetail;
 import printstore_app.DBConnection;
@@ -100,16 +99,6 @@ public class OrderModify {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public static String generateUniqueOrderId() {
-        Random random = new Random();
-        String orderId;
-        do {
-            int number = 1000000 + random.nextInt(9000000); // 7 chữ số ngẫu nhiên
-            orderId = "ORD" + number;
-        } while (isOrderIdExists(orderId)); // Lặp cho đến khi không trùng
-        return orderId;
     }
 
     public static List<Object[]> getOrderDetailForTable(String orderId) {
@@ -231,4 +220,36 @@ public class OrderModify {
         return false;
 
     }
+    
+    public static List<Object[]> findOrderById(String orderId) {
+        List<Object[]> orderList = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(
+                "SELECT * FROM Orders WHERE OrderID LIKE ?")) {
+
+            stmt.setString(1, "%" + orderId + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            int index = 1;
+            while (rs.next()) {
+                Object[] row = {
+                    index++,
+                    rs.getString("OrderID"),
+                    rs.getString("CustomerID"),
+                    rs.getInt("QuantityType"),
+                    rs.getDouble("TotalAmount"),
+                    rs.getDate("OrderDate"),
+                    rs.getString("OrderStatus")
+                };
+                orderList.add(row);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return orderList;
+    }
+
+    
 }

@@ -3,7 +3,6 @@ ui\CustomerFrame$12.class
 models\IndividualCus.class
 ui\CustomerFrame$8.class
 ui\OrderFrame$3.class
-ui\invoiceLayout.class
 models\CorporateCus.class
 ui\MainFrame$1.class
 ui\CustomerFrame$1.class
@@ -20,13 +19,16 @@ ui\OrderFrame$2.class
 ui\CustomerFrame$11.class
 ui\CustomerFrame$2.class
 ui\CustomerFrame$4.class
+utils\reportLayout.class
 ui\EmployeeFrame$2.class
+ui\OrderFrame$4.class
 ui\OrderDetailFrame$1.class
 ui\MainFrame.class
 models\Employee.class
 dao\ReportModify.class
 ui\ProductFrame$1.class
 dao\CorporateCustomerModify.class
+models\Report.class
 ui\MainFrame$7.class
 ui\ReportFrame.class
 dao\ProductModify.class
@@ -58,6 +60,7 @@ ui\reportLayout.class
 ui\CustomerFrame$6.class
 ui\ProductFrame.class
 ui\EmployeeFrame$1.class
+utils\invoiceLayout.class
 ui\MainFrame$2.class
 models\Product.class
 models\Customer.class
