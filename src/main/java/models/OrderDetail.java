@@ -4,20 +4,24 @@ package models;
 
 
 public class OrderDetail {
-    private String P_id, Order_id;
+    private String Od_id, P_id, Order_id;
     private int quantity;
-    private double price;
+    private int price;
     private String ProductName;
     
     public OrderDetail() {}
 
-    public OrderDetail(String P_id, String Order_id, int quantity, double price) {
+    public OrderDetail(String Od_id, String P_id, String Order_id, int quantity, int price) {
+        this.Od_id = Od_id;
         this.P_id = P_id;
         this.Order_id = Order_id;
         this.quantity = quantity;
         this.price = price;
     }
-
+    public String getOd_id() {
+        return Od_id;
+    }
+    
     public String getP_id() {
         return P_id;
     }
@@ -30,12 +34,16 @@ public class OrderDetail {
         return quantity;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
     
     public String getProductName() {
         return ProductName;
+    }
+    
+     public void setOd_id(String Od_id) {
+        this.Od_id = Od_id;
     }
 
     public void setP_id(String P_id) {
@@ -50,7 +58,7 @@ public class OrderDetail {
         this.quantity = quantity;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(int price) {
         this.price = price;
     }
     

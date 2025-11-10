@@ -23,6 +23,7 @@ public class CustomerFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CustomerFrame.class.getName());
     
+    
     DefaultTableModel tableModelIC;
     List<IndividualCus> IClist;
     int ICPos = -1;

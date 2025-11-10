@@ -63,7 +63,7 @@ public class CorporateCustomerModify {
         }  
         return datalist;
     }
-    // INSERT
+    
     public static void insert(CorporateCus c) {
         String sql1 = "INSERT INTO Customers (CustomerID, Phone, Email, Address) VALUES (?, ?, ?, ?)";
         String sql2 = "INSERT INTO Corporate_Cus (CorporateID, CompanyName, TaxCode, ContactPerson) VALUES (?, ?, ?, ?)";
@@ -95,7 +95,7 @@ public class CorporateCustomerModify {
         }
     }
 
-    // UPDATE
+    
     public static void update(CorporateCus c) {
         String sql1 = "UPDATE Customers SET Phone=?, Email=?, Address=? WHERE CustomerID=?";
         String sql2 = "UPDATE CorporateCus SET CompanyName=?, TaxCode=?, ContactPerson = ? WHERE CorporateID=?";
@@ -127,7 +127,7 @@ public class CorporateCustomerModify {
         }
     }
 
-    // DELETE
+    
     public static void delete(String id) {
         String sql1 = "DELETE FROM CorporateCus WHERE CorporateID = ?";
         String sql2 = "DELETE FROM Customers WHERE CustomerID = ?";

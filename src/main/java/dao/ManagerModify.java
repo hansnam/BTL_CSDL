@@ -65,7 +65,7 @@ public class ManagerModify {
         }  
         return datalist;
     }
-    // INSERT
+    
     public static void insert(Manager m) {
         String sql1 = "INSERT INTO Emloyees (EmployeeID, EName, Gender, Phone, Email, Salary) VALUES (?, ?, ?, ?, ?, ?)";
         String sql2 = "INSERT INTO Managers (StaffID, HireDate, ManagerID) VALUES (?, ?, ?)";
@@ -97,7 +97,7 @@ public class ManagerModify {
         }
     }
 
-    // UPDATE
+    
     public static void update(Manager m) {
         String sql1 = "UPDATE Employees SET EName=?, Gender=?, Phone=?, Email=?, Salary=? WHERE EmployeeID =?";
         String sql2 = "UPDATE Managers SET Title=? WHERE ManagerID=?";
@@ -129,7 +129,7 @@ public class ManagerModify {
         }
     }
 
-    // DELETE
+    
     public static void delete(String id) {
         String sql1 = "DELETE FROM Managers WHERE MângerID = ?";
         String sql2 = "DELETE FROM Employees WHERE EmployeeID = ?";

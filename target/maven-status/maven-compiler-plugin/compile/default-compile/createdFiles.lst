@@ -1,9 +1,9 @@
 ui\CustomerFrame.class
 ui\CustomerFrame$12.class
-utils\FileExporter.class
 models\IndividualCus.class
 ui\CustomerFrame$8.class
 ui\OrderFrame$3.class
+ui\invoiceLayout.class
 models\CorporateCus.class
 ui\MainFrame$1.class
 ui\CustomerFrame$1.class
@@ -11,7 +11,7 @@ ui\CustomerFrame$5.class
 ui\ProductFrame$2.class
 dao\StaffModify.class
 models\Manager.class
-ui\OrderDFrame$1.class
+ui\MainFrame$12.class
 ui\MainFrame$8.class
 dao\OrderModify.class
 ui\OrderFrame.class
@@ -20,7 +20,6 @@ ui\OrderFrame$2.class
 ui\CustomerFrame$11.class
 ui\CustomerFrame$2.class
 ui\CustomerFrame$4.class
-utils\UIUtils.class
 ui\EmployeeFrame$2.class
 ui\OrderDetailFrame$1.class
 ui\MainFrame.class
@@ -42,7 +41,6 @@ dao\CustomerModify.class
 ui\MainFrame$10.class
 ui\MainFrame$3.class
 ui\CustomerFrame$14.class
-ui\OrderDFrame.class
 dao\IndividualCustomerModify.class
 models\OrderDetail.class
 ui\CustomerFrame$7.class
@@ -56,6 +54,7 @@ ui\ProductFrame$5.class
 printstore_app\Main.class
 ui\ProductFrame$3.class
 ui\EmployeeFrame.class
+ui\reportLayout.class
 ui\CustomerFrame$6.class
 ui\ProductFrame.class
 ui\EmployeeFrame$1.class

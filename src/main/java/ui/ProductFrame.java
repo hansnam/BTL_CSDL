@@ -272,7 +272,7 @@ public class ProductFrame extends javax.swing.JFrame {
         if (pos >= 0) {
             datalist.get(pos).setP_id(idTxt.getText());
             datalist.get(pos).setP_name(nameTxt.getText());
-            datalist.get(pos).setP_price(Double.parseDouble(priceTxt.getText()));
+            datalist.get(pos).setP_price(Integer.parseInt(priceTxt.getText()));
             datalist.get(pos).setP_descript(desTxt.getText());
             
             ProductModify.update(datalist.get(pos));
@@ -284,7 +284,7 @@ public class ProductFrame extends javax.swing.JFrame {
             Product p = new Product(
                 idTxt.getText(),
                 nameTxt.getText(),
-                Double.parseDouble(priceTxt.getText()),
+                Integer.parseInt(priceTxt.getText()),
                 desTxt.getText()
             );
             ProductModify.insert(p);

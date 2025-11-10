@@ -14,7 +14,7 @@ import printstore_app.DBConnection;
 
 public class ProductModify {
 
-    // 🔹 Lấy danh sách sản phẩm (tìm kiếm theo tên nếu có chuỗi nhập vào)
+    //Lấy danh sách sản phẩm (tìm kiếm theo tên nếu có chuỗi nhập vào)
     public static List<Product> getProductList(String keyword) {
         List<Product> dataList = new ArrayList<>();
         String sql = "SELECT * FROM products";
@@ -33,7 +33,7 @@ public class ProductModify {
                 Product p = new Product(
                         rs.getString("ProductID"),
                         rs.getString("ProductName"),
-                        rs.getDouble("Price"),
+                        rs.getInt("Price"),
                         rs.getString("Descriptions")
                 );
                 dataList.add(p);
@@ -46,7 +46,7 @@ public class ProductModify {
         return dataList;
     }
 
-    // 🔹 Thêm sản phẩm mới
+    //Thêm sản phẩm mới
     public static void insert(Product product) {
         String sql = "INSERT INTO products(ProductID, ProductName, Price, Descriptions) VALUES (?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -62,7 +62,7 @@ public class ProductModify {
         }
     }
 
-    // 🔹 Cập nhật thông tin sản phẩm
+    //Cập nhật thông tin sản phẩm
     public static void update(Product product) {
         String sql = "UPDATE products SET ProductName = ?, Price = ?, Descriptions = ? WHERE ProductID = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -78,7 +78,7 @@ public class ProductModify {
         }
     }
 
-    // Xóa sản phẩm
+    //Xóa sản phẩm
     public static void delete(String productId) {
         String sql = "DELETE FROM products WHERE ProductID = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

@@ -65,7 +65,7 @@ public class StaffModify {
         }  
         return datalist;
     }
-    // INSERT
+   
     public static void insert(Staff s) {
         String sql1 = "INSERT INTO Employees (EmployeeID, EName, Gender, Phone, Email, Salary) VALUES (?, ?, ?, ?, ?, ?)";
         String sql2 = "INSERT INTO Staffs (StaffID, HireDate) VALUES (?, ?)";
@@ -97,7 +97,7 @@ public class StaffModify {
         }
     }
 
-    // UPDATE
+    
     public static void update(Staff s) {
         String sql1 = "UPDATE Employees SET EName=?, Gender=?, Phone=?, Email=?, Salary=? WHERE EmployeeID =?";
         String sql2 = "UPDATE Staffs SET HireDate=? WHERE StaffID=?";
@@ -129,7 +129,7 @@ public class StaffModify {
         }
     }
 
-    // DELETE
+
     public static void delete(String id) {
         String sql1 = "DELETE FROM Staffs WHERE Staff_ID = ?";
         String sql2 = "DELETE FROM Employees WHERE Employee_ID = ?";

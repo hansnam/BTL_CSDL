@@ -31,7 +31,7 @@ public class OrderModify {
                 o.setId(rs.getString("OrderID"));
                 o.setCus_id(rs.getString("CustomerID"));
                 o.setQuantityType(rs.getInt("QuantityType"));
-                o.setTotalAmount(rs.getDouble("TotalAmount"));
+                o.setTotalAmount(rs.getInt("TotalAmount"));
                 Timestamp t = rs.getTimestamp("OrderDate");
                 if (t != null) {
                     o.setDate(t.toLocalDateTime().toString());
@@ -63,7 +63,7 @@ public class OrderModify {
                     OrderDetail d = new OrderDetail();
                     d.setProductName(rs.getString("product_name"));
                     d.setQuantity(rs.getInt("Quantity"));
-                    d.setPrice(rs.getDouble("Price"));
+                    d.setPrice(rs.getInt("Price"));
                     datalist.add(d);
                 }
             }
@@ -115,13 +115,12 @@ public class OrderModify {
     public static List<Object[]> getOrderDetailForTable(String orderId) {
         List<Object[]> orderDetailsList = new ArrayList<>();
 
-        // Câu lệnh SQL này lấy đúng các cột bạn cần cho JTable
+        
         String sql = "SELECT p.ProductName,p.Price, od.Quantity, (od.Quantity * p.Price) AS SubTotal "
                 + "FROM orderdetail od JOIN products p ON od.ProductID = p.ProductID "
                 + "WHERE od.OrderID = ?";
 
-        // Sử dụng try-with-resources để đảm bảo Connection, PreparedStatement, và ResultSet
-        // luôn được đóng lại, ngay cả khi có lỗi.
+        
         try (Connection conn = DBConnection.getConnection(); // Giả sử DBConnection.getConnection() là đúng
                  PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -135,7 +134,7 @@ public class OrderModify {
                     row[1] = rs.getString("ProductName");
                     row[2] = rs.getString("Price");
                     row[3] = rs.getInt("Quantity");
-                    row[4] = rs.getDouble("SubTotal"); // Bạn có thể dùng getLong hoặc getDouble tùy kiểu dữ liệu
+                    row[4] = rs.getInt("SubTotal"); // Bạn có thể dùng getLong hoặc getDouble tùy kiểu dữ liệu
 
                     orderDetailsList.add(row);
                 }
@@ -176,9 +175,9 @@ public class OrderModify {
                 row[0] = cnt++;
                 row[1] = rs.getString("OrderID");
                 row[2] = rs.getString("CustomerID");
-                row[3] = rs.getInt("ProductTypes");     // <-- đổi tên cột hiển thị
-                row[4] = rs.getDouble("TotalAmount");
-                row[5] = rs.getDate("OrderDate");
+                row[3] = rs.getInt("ProductTypes");     
+                row[4] = rs.getInt("TotalAmount");
+                row[5] = rs.getTimestamp("OrderDate");
                 row[6] = rs.getString("OrderStatus");
                 orderList.add(row);
             }
@@ -190,7 +189,7 @@ public class OrderModify {
         return orderList;
     }
 
-    public static boolean insertOrder(String orderId, String customerId, double totalAmount, java.sql.Date orderDate, String status, String ManagerID, int QuantityType) {
+    public static boolean insertOrder(String orderId, String customerId, int totalAmount, java.sql.Timestamp orderDate, String status, String ManagerID, int QuantityType) {
         String sql = "INSERT INTO orders (OrderID, CustomerID, TotalAmount, OrderDate, OrderStatus, ManagerID, QuantityType) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         //boolean orderSaved = OrderModify.insertOrder(orderId, customerId, totalAmount, orderDate, status, managerId);
@@ -198,13 +197,13 @@ public class OrderModify {
 
             ps.setString(1, orderId);
             ps.setString(2, customerId);
-            ps.setDouble(3, totalAmount);
-            ps.setDate(4, orderDate);
+            ps.setInt(3, totalAmount);
+            ps.setTimestamp(4, orderDate);
             ps.setString(5, status);
             ps.setString(6, ManagerID);
             ps.setInt(7, QuantityType);
 
-            return ps.executeUpdate() > 0; // Trả về true nếu chèn thành công
+            return ps.executeUpdate() > 0; 
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -220,9 +219,9 @@ public class OrderModify {
             ps.setString(2, productId);
             ps.setInt(3, quantity);
 
-            // ✅ Lấy giá sản phẩm để tính SubTotal
+            // Lấy giá sản phẩm để tính SubTotal
             double price = ProductModify.getProductPriceById(productId);
-            ps.setDouble(4, price * quantity);
+            ps.setInt(4, (int) (price * quantity));
 
             return ps.executeUpdate() > 0;
 

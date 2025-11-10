@@ -10,7 +10,7 @@ import printstore_app.DBConnection;
 
 public class CustomerModify {
 
-    // 🔹 Lấy danh sách khách hàng
+    //Lấy danh sách khách hàng
     public static List<Customer> getListCustomer() {
         List<Customer> datalist = new ArrayList<>();
         String sql = "SELECT * FROM Customers";
@@ -33,7 +33,7 @@ public class CustomerModify {
         return datalist;
     }
 
-    // 🔹 Thêm khách hàng mới
+    //Thêm khách hàng mới
     public static void insert(Customer c) {
         String sql = "INSERT INTO Customers (CustomerID, CustomerName, Phone, Email, Address) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
@@ -50,7 +50,7 @@ public class CustomerModify {
         }
     }
 
-    // 🔹 Cập nhật thông tin khách hàng
+    //Cập nhật thông tin khách hàng
     public static void update(Customer c) {
         String sql = "UPDATE Customers SET CustomerName = ?, Phone = ?, Email = ?, Address = ? WHERE CustomerID = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -67,7 +67,7 @@ public class CustomerModify {
         }
     }
 
-    // 🔹 Xóa khách hàng theo ID
+    //Xóa khách hàng theo ID
     public static void delete(String customerId) {
         String sql = "DELETE FROM Customers WHERE CustomerID = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -80,4 +80,100 @@ public class CustomerModify {
             e.printStackTrace();
         }
     }
+    
+    
+    public static String getCustomerNameById(String customerId) {
+        String name = "";
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.getConnection();
+
+            
+            String sql = """
+            SELECT ICName AS CustomerName FROM individualCus WHERE IndividualID = ?
+            UNION
+            SELECT CompanyName AS CustomerName FROM corporateCus WHERE CorporateID = ?
+        """;
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, customerId);
+            stmt.setString(2, customerId);
+
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                name = rs.getString("CustomerName");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception ignored) {
+            }
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (Exception ignored) {
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return name;
+    }
+    public static String getCustomerAddressById(String customerId) {
+        String address = "";
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.getConnection();
+
+            
+            String sql = """
+            SELECT Address FROM customers WHERE CustomerID = ?
+                    """;
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, customerId);
+            
+
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                address = rs.getString("Address");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception ignored) {
+            }
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (Exception ignored) {
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return address;
+    }
+
+    
 }

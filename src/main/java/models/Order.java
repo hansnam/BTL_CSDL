@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Order {
     private String id, status, date, Cus_id, Emp_id;
     private int QuantityType;
-    private double TotalAmount;
+    private int TotalAmount;
     private List<OrderDetail> items = new ArrayList<>();
     
     public Order () {}
@@ -80,7 +80,7 @@ public class Order {
         this.QuantityType = QuantityType;
     }
 
-    public void setTotalAmount(double TotalAmount) {
+    public void setTotalAmount(int TotalAmount) {
         this.TotalAmount = TotalAmount;
     }
 
@@ -88,8 +88,8 @@ public class Order {
         this.items = items;
     }
     
-    public double calcTotal () {
-        double sum = 0;
+    public int calcTotal () {
+        int sum = 0;
         for (OrderDetail i : items) {
             sum += i.getSubTotal();
         }

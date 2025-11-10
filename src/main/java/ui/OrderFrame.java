@@ -4,6 +4,7 @@
  */
 package ui;
 
+import dao.CustomerModify;
 import javax.swing.table.DefaultTableModel;
 import dao.OrderModify;
 import java.io.BufferedWriter;
@@ -11,6 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
@@ -29,37 +32,28 @@ public class OrderFrame extends javax.swing.JFrame {
     public OrderFrame() {
         initComponents();
         
-        // 1. Lấy model từ JTable
         tableModel = (DefaultTableModel) orderTable.getModel();
         
-        // 2. Tải tất cả dữ liệu lên JTable khi cửa sổ được tạo
         loadAllOrders();
         
-        // 3. Đặt cửa sổ ra giữa màn hình
         setLocationRelativeTo(null);
         
     }
     private void loadAllOrders() {
-        // Xóa dữ liệu cũ (nếu có)
+        
         tableModel.setRowCount(0);
 
-        // Lấy 6 cột dữ liệu từ DAO (Phương thức đã tạo ở Bước 1)
         List<Object[]> orderList = OrderModify.getAllOrdersForTable();
 
         if (orderList.isEmpty()) {
             logger.warning("Không tìm thấy hóa đơn nào trong CSDL.");
             return;
         }
-        
-        // Duyệt qua danh sách dữ liệu và thêm vào JTable (7 cột)
         else {
             for (Object[] row : orderList) {
                 
                 tableModel.addRow(row);
             }
-
-            // Thêm hàng hoàn chỉnh vào JTable
-            // tableModel.addRow(Row);
         }
     }
 
@@ -85,7 +79,7 @@ public class OrderFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "STT", "Mã đơn hàng", "Mã khách hàng", "Số loại sản phẩm", "Tổng tiền", "Ngày đặt hàng", "Trạng thái thanh toán"
+                "STT", "Mã đơn hàng", "Mã khách hàng", "Số loại sản phẩm", "Tổng tiền", "Ngày đặt hàng", "Trạng thái đơn hàng"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -116,7 +110,7 @@ public class OrderFrame extends javax.swing.JFrame {
         });
 
         detailBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        detailBtn.setText("Chi tiết hoá đơn");
+        detailBtn.setText("Chi tiết đơn hàng");
         detailBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 detailBtnActionPerformed(evt);
@@ -128,15 +122,13 @@ public class OrderFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(32, 32, 32)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(detailBtn)
-                        .addGap(78, 78, 78)
+                        .addGap(34, 34, 34)
                         .addComponent(issueBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(38, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -144,11 +136,11 @@ public class OrderFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(64, 64, 64)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(issueBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(detailBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(41, 41, 41))
+                    .addComponent(detailBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(issueBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         pack();
@@ -169,8 +161,6 @@ public class OrderFrame extends javax.swing.JFrame {
         
         // Lấy Mã đơn hàng (OrderID) từ cột 1 (vì cột 0 là STT)
         String orderId = tableModel.getValueAt(selectedRow, 1).toString();
-        
-        // Mở cửa sổ OrderDetailFrame và truyền orderId vào
         OrderDetailFrame detailFrame = new OrderDetailFrame(orderId);
         detailFrame.setVisible(true);
         // Đặt vị trí của cửa sổ chi tiết ở giữa cửa sổ hiện tại (OrderFrame)
@@ -179,6 +169,52 @@ public class OrderFrame extends javax.swing.JFrame {
 
     private void issueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_issueBtnActionPerformed
         // TODO add your handling code here:
+
+        int selectedRow = orderTable.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một hoá đơn để xuất file.",
+                    "Chưa chọn hoá đơn",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            //Lấy thông tin từ hàng được chọn trong bảng
+            String orderId = tableModel.getValueAt(selectedRow, 1).toString();
+            String customerId = tableModel.getValueAt(selectedRow, 2).toString();
+            String orderDate = tableModel.getValueAt(selectedRow, 5).toString();
+
+            //Lấy thông tin khách hàng (Name/CompanyName và Address)
+            
+            String customerName = CustomerModify.getCustomerNameById(customerId); 
+            String address = CustomerModify.getCustomerAddressById(customerId);      
+
+            //Lấy danh sách chi tiết hoá đơn từ cơ sở dữ liệu
+            List<Object[]> details = OrderModify.getOrderDetailForTable(orderId);
+            if (details == null || details.isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "Không có chi tiết đơn hàng để xuất hoá đơn.",
+                        "Thiếu dữ liệu",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+          
+            invoiceLayout.exportPDF(orderId, customerId, customerName, address, orderDate, details);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Lỗi khi xuất hoá đơn PDF: " + e.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+
+
+        
+        /*
         int selectedRow = orderTable.getSelectedRow();
 
         if (selectedRow == -1) {
@@ -189,13 +225,15 @@ public class OrderFrame extends javax.swing.JFrame {
             return;
         }
         
+        
         // Lấy thông tin từ hàng đã chọn
         String orderId = tableModel.getValueAt(selectedRow, 1).toString();
         String customerId = tableModel.getValueAt(selectedRow, 2).toString();
         String totalAmount = tableModel.getValueAt(selectedRow, 4).toString();
         String orderDate = tableModel.getValueAt(selectedRow, 5).toString();
 
-        // 1. Tạo thư mục "hoá đơn" nếu chưa tồn tại
+        //Tạo thư mục "hoá đơn" nếu chưa tồn tại
+        
         String dirPath = "hoá đơn";
         try {
             Files.createDirectories(Paths.get(dirPath));
@@ -208,41 +246,45 @@ public class OrderFrame extends javax.swing.JFrame {
             return;
         }
         
-        // 2. Tạo tên file duy nhất
+        //Tạo tên file duy nhất
         String filePath = dirPath + "/HoaDon_" + orderId + ".txt";
 
-        // 3. Ghi file (sử dụng try-with-resources để tự động đóng file)
+        //Ghi file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, java.nio.charset.StandardCharsets.UTF_8))) {
             
             // (Thêm java.nio.charset.StandardCharsets.UTF_8 để đảm bảo ghi Tiếng Việt đúng)
+            // Lấy thời gian hệ thống hiện tại
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
+            String formattedTime = now.format(formatter);
 
 
             writer.write("==========   HOÁ ĐƠN BÁN HÀNG   =========="); writer.newLine();
             writer.newLine();
             writer.write("Mã hoá đơn: " + orderId); writer.newLine();
             writer.write("Mã khách hàng: " + customerId); writer.newLine();
-            writer.write("Ngày đặt: " + orderDate); writer.newLine();
+            writer.write("Ngày đặt hàng: " + orderDate); writer.newLine();
+            writer.write("Thời gian xuất hoá đơn: " + formattedTime); writer.newLine();
             writer.newLine();
             writer.write("--------------------------------------------------"); // Kéo dài separator
             writer.newLine();
             writer.write("CHI TIẾT SẢN PHẨM"); writer.newLine();
             writer.write("--------------------------------------------------"); writer.newLine();
             
-            // === THAY ĐỔI 1: CẬP NHẬT HEADER (Thêm STT) ===
-            // Định dạng: STT (4 ký tự), Tên SP (20), Số lượng (10), Giá (10)
+            
             writer.write(String.format("%-4s  %-20s  %-10s  %-10s  %-10s", "STT", "Tên SP", "Số lượng", "Giá", "Thành tiền"));
             writer.newLine();
             writer.write("--------------------------------------------------"); // Kéo dài separator
             writer.newLine();
 
-            // Lấy chi tiết sản phẩm từ CSDL
+           
             List<Object[]> details = OrderModify.getOrderDetailForTable(orderId);
             double calculatedTotal = 0.0;
           
             for (int i = 0; i < details.size(); i++) {
                 
-                Object[] item = details.get(i); // Lấy item theo index
-                int stt = i + 1; // Tạo STT
+                Object[] item = details.get(i);
+                int stt = i + 1;
                 
               
                 String tenSP = item[1].toString();
@@ -266,14 +308,14 @@ public class OrderFrame extends javax.swing.JFrame {
             }
             
             writer.newLine();
-            writer.write("=================================================="); // Kéo dài separator
+            writer.write("=================================================="); 
             writer.newLine();
             writer.write("Tổng tiền: " + calculatedTotal + " VND"); writer.newLine();
-            writer.write("=================================================="); // Kéo dài separator
+            writer.write("=================================================="); 
             writer.newLine();
             writer.write("Cảm ơn quý khách!"); writer.newLine();
 
-            // 4. Thông báo thành công
+            
             JOptionPane.showMessageDialog(this, 
                     "Đã xuất hoá đơn thành công!\nĐường dẫn: " + filePath, 
                     "Xuất file thành công", 
@@ -286,7 +328,7 @@ public class OrderFrame extends javax.swing.JFrame {
                     "Lỗi I/O", 
                     JOptionPane.ERROR_MESSAGE);
         }
-        
+        */
     }//GEN-LAST:event_issueBtnActionPerformed
 
     /**
