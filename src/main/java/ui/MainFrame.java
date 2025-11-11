@@ -1,18 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package ui;
 
 import dao.OrderModify;
 import dao.ProductModify;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,10 +14,6 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import models.Product;
 
-/**
- *
- * @author Dell
- */
 public class MainFrame extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
@@ -33,11 +23,10 @@ public class MainFrame extends javax.swing.JFrame {
     DefaultTableModel cartModel;
     List<Product> productList = new ArrayList<>();
 
-    /**
-     * Creates new form MainFrame
-     */
     public MainFrame() {
         initComponents();
+        setLocationRelativeTo(null);
+        
         loadProducts();
     }
 
@@ -51,20 +40,20 @@ public class MainFrame extends javax.swing.JFrame {
         for (Product p : list) {
             productModel.addRow(new Object[]{
                 i++,
-                p.getP_name(),
-                p.getP_price(),
-                p.getP_descript()
+                p.getName(),
+                p.getPrice(),
+                p.getDescriptions()
             });
         }
         
         productTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) { // double click
+                if (e.getClickCount() == 2) { // int click
                     int row = productTable.getSelectedRow();
                     if (row >= 0) {
                         String productName = productModel.getValueAt(row, 1).toString();
-                        double price = Double.parseDouble(productModel.getValueAt(row, 2).toString());
+                        int price = Integer.parseInt(productModel.getValueAt(row, 2).toString());
 
                         boolean found = false;
                         for (int i = 0; i < cartModel.getRowCount(); i++) {
@@ -96,7 +85,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void addToCart(int row) {
         String productName = productModel.getValueAt(row, 1).toString();
-        double price = Integer.parseInt(productModel.getValueAt(row, 2).toString());
+        int price = Integer.parseInt(productModel.getValueAt(row, 2).toString());
 
         boolean found = false;
         for (int i = 0; i < cartModel.getRowCount(); i++) {
@@ -104,7 +93,7 @@ public class MainFrame extends javax.swing.JFrame {
             if (cartName.equals(productName)) {
                 int quantity = Integer.parseInt(cartModel.getValueAt(i, 2).toString());
                 quantity++;
-                int total = (int) (quantity * price);
+                int total = quantity * price;
                 cartModel.setValueAt(quantity, i, 2);
                 cartModel.setValueAt(total, i, 3);
                 found = true;
@@ -118,12 +107,12 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
     
-    private double calculateTotalAmount() {
-        double total = 0;
+    private int calculateTotalAmount() {
+        int total = 0;
         for (int i = 0; i < cartModel.getRowCount(); i++) {
             // Lấy tổng tiền từ cột 3 (Thành tiền)
             try {
-                total += Double.parseDouble(cartModel.getValueAt(i, 3).toString());
+                total += Integer.parseInt(cartModel.getValueAt(i, 3).toString());
             } catch (NumberFormatException e) {
                 logger.log(Level.WARNING, "L\u1ed7i \u0111\u1ecbnh d\u1ea1ng s\u1ed1 \u1edf c\u1ed9t th\u00e0nh ti\u1ec1n, h\u00e0ng: {0}", i);
             }
@@ -141,9 +130,9 @@ public class MainFrame extends javax.swing.JFrame {
         for (Product p : list) {
             model.addRow(new Object[]{
                 i++,
-                p.getP_name(),
-                p.getP_price(),
-                p.getP_descript()
+                p.getName(),
+                p.getPrice(),
+                p.getDescriptions()
             });
         }
     }
@@ -410,13 +399,11 @@ public class MainFrame extends javax.swing.JFrame {
 
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
         new EmployeeFrame().setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-
-       
+        
         int quantityType = cartModel.getRowCount();
 
         if (quantityType == 0) {
@@ -525,35 +512,29 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void delBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delBtnActionPerformed
-        // TODO add your handling code here:
         javax.swing.table.DefaultTableModel cartModel = (javax.swing.table.DefaultTableModel) cartTable.getModel();
         cartModel.setRowCount(0);
         javax.swing.JOptionPane.showMessageDialog(this, "Đơn hàng đã được xóa!");
     }//GEN-LAST:event_delBtnActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        // TODO add your handling code here:
         new ReportFrame().setVisible(true);
-
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        // TODO add your handling code here:
         new OrderFrame().setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
-
+                       
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        // TODO add your handling code here:
         new CustomerFrame().setVisible(true);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        // TODO add your handling code here:
         new ProductFrame().setVisible(true);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void removeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeBtnActionPerformed
-        // TODO add your handling code here:
+
         int selectedRow = cartTable.getSelectedRow();
         if (selectedRow == -1) {
             javax.swing.JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm cần xóa!");

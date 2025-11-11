@@ -3,56 +3,50 @@
 package models;
 
 
-public class Customer {
-    private String Customer_ID, Phone, Email, Address;
+public class Customer {    
+    private String customerID, phone, email, address;
 
-    public Customer(String Cus_id, String phone, String email, String address) {
-        this.Customer_ID = Cus_id;
-        this.Phone = phone;
-        this.Email = email;
-        this.Address = address;
+    public Customer () {};
+    
+    public Customer(String Cusid, String phone, String email, String address) {
+        this.customerID = Cusid;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
     }
 
-    public Customer() {
-        throw new UnsupportedOperationException("Not supported yet."); 
-    }
-
-    public String getCustomer_ID() {
-        return Customer_ID;
+    public String getCustomerID() {
+        return customerID;
     }
 
     public String getPhone() {
-        return Phone;
+        return phone;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public String getAddress() {
-        return Address;
+        return address;
     }
 
-    public void setCustomer_ID(String Customer_id) {
-        this.Customer_ID = Customer_id;
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
     }
 
-    public void setPhone(String Phone) {
-        this.Phone = Phone;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public void setEmail(String Email) {
-        this.Email = Email;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void setAddress(String Address) {
-        this.Address = Address;
+    public void setAddress(String address) {
+        this.address = address;
     }
-
-    public void setVisible(boolean b) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
+   
 }
 
 

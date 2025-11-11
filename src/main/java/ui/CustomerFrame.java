@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package ui;
 
 import dao.CorporateCustomerModify;
@@ -9,16 +6,11 @@ import dao.IndividualCustomerModify;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
-import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import models.CorporateCus;
 import models.IndividualCus;
 
-/**
- *
- * @author Dell
- */
 public class CustomerFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CustomerFrame.class.getName());
@@ -31,12 +23,10 @@ public class CustomerFrame extends javax.swing.JFrame {
     DefaultTableModel tableModelCC;
     List<CorporateCus> CClist;
     int CCPos = -1;
-    
-    /**
-     * Creates new form CUSFRAME
-     */
+
     public CustomerFrame() {
         initComponents();
+        setLocationRelativeTo(null);
         
         tableModelIC = (DefaultTableModel) ICTable.getModel();
         IClist = IndividualCustomerModify.getIndividualCusList(null);
@@ -47,8 +37,8 @@ public class CustomerFrame extends javax.swing.JFrame {
             public void mouseClicked(MouseEvent e) {
                 ICPos = ICTable.getSelectedRow();
                 
-                cusIDTxt.setText(IClist.get(ICPos).getCustomer_ID());
-                nameTxt.setText(IClist.get(ICPos).getIC_name());
+                cusIDTxt.setText(IClist.get(ICPos).getCustomerID());
+                nameTxt.setText(IClist.get(ICPos).getICName());
                 genderTxt.setText(IClist.get(ICPos).getGender());
                 phoneTxt.setText(IClist.get(ICPos).getPhone());
                 emailTxt.setText(IClist.get(ICPos).getEmail());
@@ -77,15 +67,15 @@ public class CustomerFrame extends javax.swing.JFrame {
         CCTable.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-            CCPos = CCTable.getSelectedRow();
-            
-            CusIDTxt.setText(CClist.get(CCPos).getCustomer_ID());
-            companyNameTxt.setText(CClist.get(CCPos).getCompanyName());
-            taxCodeTxt.setText(CClist.get(CCPos).getTaxCode());
-            contactPersonTxt.setText(CClist.get(CCPos).getContactPerson());
-            CphoneTxt.setText(CClist.get(CCPos).getPhone());
-            CemailTxt.setText(CClist.get(CCPos).getEmail());
-            CaddressTxt.setText(CClist.get(CCPos).getAddress());
+                CCPos = CCTable.getSelectedRow();
+
+                CusIDTxt.setText(CClist.get(CCPos).getCustomerID());
+                companyNameTxt.setText(CClist.get(CCPos).getCompanyName());
+                taxCodeTxt.setText(CClist.get(CCPos).getTaxCode());
+                contactPersonTxt.setText(CClist.get(CCPos).getContactPerson());
+                CphoneTxt.setText(CClist.get(CCPos).getPhone());
+                CemailTxt.setText(CClist.get(CCPos).getEmail());
+                CaddressTxt.setText(CClist.get(CCPos).getAddress());
             }
 
             @Override
@@ -99,17 +89,16 @@ public class CustomerFrame extends javax.swing.JFrame {
 
             @Override
             public void mouseExited(MouseEvent e) {}
-        });
-        
-            
+        });            
     }
+    
     private void showDataIC() {
         tableModelIC.setRowCount(0);
         for(IndividualCus ic : IClist) {
             tableModelIC.addRow(new Object[] {
                 tableModelIC.getRowCount() + 1,
-                ic.getCustomer_ID(),
-                ic.getIC_name(),
+                ic.getCustomerID(),
+                ic.getICName(),
                 ic.getGender(),
                 ic.getPhone(),
                 ic.getEmail(),
@@ -118,28 +107,22 @@ public class CustomerFrame extends javax.swing.JFrame {
         }
     }
     
-   private void showDataCC() {
-       tableModelCC.setRowCount(0);
-       for(CorporateCus cc : CClist) {
-           tableModelCC.addRow(new Object[]{
-               tableModelCC.getRowCount() + 1,
-               cc.getCustomer_ID(),
-               cc.getCompanyName(),
-               cc.getTaxCode(),
-               cc.getContactPerson(),
-               cc.getPhone(),
-               cc.getEmail(),
-               cc.getAddress()
-});
-       }
-   }
+    private void showDataCC() {
+        tableModelCC.setRowCount(0);
+        for(CorporateCus cc : CClist) {
+            tableModelCC.addRow(new Object[]{
+                tableModelCC.getRowCount() + 1,
+                cc.getCustomerID(),
+                cc.getCompanyName(),
+                cc.getTaxCode(),
+                cc.getContactPerson(),
+                cc.getPhone(),
+                cc.getEmail(),
+                cc.getAddress()
+            });
+        }
+    }
 
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -235,9 +218,16 @@ public class CustomerFrame extends javax.swing.JFrame {
                 "STT", "Mã khách hàng", "Họ và tên", "Giới tính", "Số điện thoại", "Email", "Địa chỉ"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -245,13 +235,8 @@ public class CustomerFrame extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(ICTable);
         if (ICTable.getColumnModel().getColumnCount() > 0) {
-            ICTable.getColumnModel().getColumn(0).setResizable(false);
-            ICTable.getColumnModel().getColumn(1).setResizable(false);
-            ICTable.getColumnModel().getColumn(2).setResizable(false);
-            ICTable.getColumnModel().getColumn(3).setResizable(false);
-            ICTable.getColumnModel().getColumn(4).setResizable(false);
-            ICTable.getColumnModel().getColumn(5).setResizable(false);
-            ICTable.getColumnModel().getColumn(6).setResizable(false);
+            ICTable.getColumnModel().getColumn(0).setMinWidth(40);
+            ICTable.getColumnModel().getColumn(0).setMaxWidth(100);
         }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -262,36 +247,35 @@ public class CustomerFrame extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 915, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(14, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel5))
-                                .addGap(88, 88, 88)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(addressTxt)
-                                    .addComponent(emailTxt)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel1))
-                                .addGap(48, 48, 48)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(phoneTxt)
-                                    .addComponent(genderTxt)
-                                    .addComponent(nameTxt)
-                                    .addComponent(cusIDTxt))))
-                        .addGap(117, 117, 117)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(searchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(delBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(saveBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(126, 126, 126))))
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel5))
+                        .addGap(88, 88, 88)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(addressTxt)
+                            .addComponent(emailTxt)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(48, 48, 48)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(phoneTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                            .addComponent(genderTxt)
+                            .addComponent(nameTxt)
+                            .addComponent(cusIDTxt))))
+                .addGap(117, 117, 117)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(searchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(delBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(saveBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(126, 126, 126))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 915, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,9 +313,9 @@ public class CustomerFrame extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
                             .addComponent(addressTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 107, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(62, 62, 62))
         );
 
         jTabbedPane1.addTab("KHÁCH HÀNG CÁ NHÂN", jPanel1);
@@ -398,9 +382,16 @@ public class CustomerFrame extends javax.swing.JFrame {
                 "STT", "Mã khách hàng", "Tên doanh nghiệp", "Mã số thuế", "Người đại diện", "Số điện thoại", "Email", "Địa chỉ"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, true, true
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -408,14 +399,8 @@ public class CustomerFrame extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(CCTable);
         if (CCTable.getColumnModel().getColumnCount() > 0) {
-            CCTable.getColumnModel().getColumn(0).setResizable(false);
-            CCTable.getColumnModel().getColumn(1).setResizable(false);
-            CCTable.getColumnModel().getColumn(2).setResizable(false);
-            CCTable.getColumnModel().getColumn(3).setResizable(false);
-            CCTable.getColumnModel().getColumn(4).setResizable(false);
-            CCTable.getColumnModel().getColumn(5).setResizable(false);
-            CCTable.getColumnModel().getColumn(6).setResizable(false);
-            CCTable.getColumnModel().getColumn(7).setResizable(false);
+            CCTable.getColumnModel().getColumn(0).setMinWidth(40);
+            CCTable.getColumnModel().getColumn(0).setMaxWidth(100);
         }
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -435,7 +420,7 @@ public class CustomerFrame extends javax.swing.JFrame {
                             .addComponent(jLabel9))
                         .addGap(44, 44, 44)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CusIDTxt)
+                            .addComponent(CusIDTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
                             .addComponent(companyNameTxt)
                             .addComponent(taxCodeTxt, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(contactPersonTxt, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -451,10 +436,10 @@ public class CustomerFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(DelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(105, 105, 105))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(17, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 909, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -503,8 +488,9 @@ public class CustomerFrame extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(CaddressTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35))
         );
 
         jTabbedPane1.addTab("KHÁCH HÀNG DOANH NGHIỆP", jPanel2);
@@ -527,19 +513,20 @@ public class CustomerFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void phoneTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_phoneTxtActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_phoneTxtActionPerformed
 
+        
+    }//GEN-LAST:event_phoneTxtActionPerformed
+                                    
     private void CemailTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CemailTxtActionPerformed
-        // TODO add your handling code here:
+
+        
     }//GEN-LAST:event_CemailTxtActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        // TODO add your handling code here:
         if (ICPos >= 0) {
-            IClist.get(ICPos).setCustomer_ID(cusIDTxt.getText());
-            IClist.get(ICPos).setIC_name(nameTxt.getText());
-            IClist.get(ICPos).setIC_gender(genderTxt.getText());
+            IClist.get(ICPos).setCustomerID(cusIDTxt.getText());
+            IClist.get(ICPos).setICName(nameTxt.getText());
+            IClist.get(ICPos).setICGender(genderTxt.getText());
             IClist.get(ICPos).setPhone(phoneTxt.getText());
             IClist.get(ICPos).setEmail(emailTxt.getText());
             IClist.get(ICPos).setAddress(addressTxt.getText());
@@ -570,7 +557,6 @@ public class CustomerFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
-        // TODO add your handling code here:
         String s = JOptionPane.showInputDialog("Nhập tên khách hàng cần tìm");
         if(!s.isEmpty()) {
             s = "%"+s+"%";
@@ -580,9 +566,8 @@ public class CustomerFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_searchBtnActionPerformed
 
     private void SaveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveBtnActionPerformed
-        // TODO add your handling code here:
         if(CCPos >= 0) {
-            CClist.get(CCPos).setCustomer_ID(CusIDTxt.getText());
+            CClist.get(CCPos).setCustomerID(CusIDTxt.getText());
             CClist.get(CCPos).setCompanyName(companyNameTxt.getText());
             CClist.get(CCPos).setTaxCode(taxCodeTxt.getText());
             CClist.get(CCPos).setContactPerson(contactPersonTxt.getText());
@@ -618,13 +603,13 @@ public class CustomerFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_SaveBtnActionPerformed
 
     private void delBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delBtnActionPerformed
-        // TODO add your handling code here:
+
         if (ICPos == -1) {
             JOptionPane.showMessageDialog(rootPane, "Chưa chọn khách hàng cần xoá, vui lòng kiểm tra lại!");
         }
         int option = JOptionPane.showConfirmDialog(rootPane, "Bạn chắc chắn muốn xoá khách hàng này chứ?");
         if(option == 0) {
-            IndividualCustomerModify.delete(IClist.get(ICPos).getCustomer_ID());
+            IndividualCustomerModify.delete(IClist.get(ICPos).getCustomerID());
             ICPos = -1;
             IClist = IndividualCustomerModify.getIndividualCusList(null);
             showDataIC();
@@ -638,7 +623,6 @@ public class CustomerFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_delBtnActionPerformed
 
     private void SearchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchBtnActionPerformed
-        // TODO add your handling code here:
         String s = JOptionPane.showInputDialog("Nhập tên doanh nghiệp cần tìm");
         if(!s.isEmpty()) {
             s = "%"+s+"%";
@@ -648,13 +632,13 @@ public class CustomerFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_SearchBtnActionPerformed
 
     private void DelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelBtnActionPerformed
-        // TODO add your handling code here:
         if (CCPos == -1) {
             JOptionPane.showMessageDialog(rootPane, "Chưa chọn doanh nghiệp cần xoá, vui lòng kiểm tra lại!");
+            return;
         }
         int option = JOptionPane.showConfirmDialog(rootPane, "Bạn chắc chắn muốn xoá doanh nghiệp này chứ?");
         if(option == 0) {
-            CorporateCustomerModify.delete(CClist.get(CCPos).getCustomer_ID());
+            CorporateCustomerModify.delete(CClist.get(CCPos).getCustomerID());
             CCPos = -1;
             CClist = CorporateCustomerModify.getCorporCusList(null);
             showDataCC();
@@ -669,38 +653,15 @@ public class CustomerFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_DelBtnActionPerformed
 
     private void taxCodeTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taxCodeTxtActionPerformed
-        // TODO add your handling code here:
+
+        
     }//GEN-LAST:event_taxCodeTxtActionPerformed
 
     private void CphoneTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CphoneTxtActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_CphoneTxtActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new CustomerFrame().setVisible(true));
-    }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable CCTable;
     private javax.swing.JTextField CaddressTxt;

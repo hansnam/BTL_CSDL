@@ -4,47 +4,165 @@ import printstore_app.DBConnection;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import models.Report;
 
 public class ReportModify {
+    
+    public static void insert (Report report) {
+        String sql = "INSERT INTO reports "
+                + "(ReportID, ManagerID, StaffID, OrderQuantity, Revenue, Receivables, StartDate, EndDate) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    // Doanh thu tổng theo ngày (trả map: order_id -> total) hoặc ngày -> total
-    public static Map<String, Double> revenueByDate(LocalDate date) {
-        Map<String, Double> result = new LinkedHashMap<>();
-        String sql = "SELECT id, total FROM orders WHERE DATE(created_at)=? AND status='PAID' ORDER BY created_at";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDate(1, Date.valueOf(date));
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    result.put("Order #" + rs.getInt("id"), rs.getDouble("total"));
-                }
-            }
-        } catch (Exception ex) {
+        try (Connection conn = DBConnection.getConnection()) {
+            
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, report.getReportID());
+            ps.setString(2, report.getManagerID());
+            ps.setString(3, report.getStaffID());
+            ps.setInt(4, report.getOrderQuantity());
+            ps.setInt(5, report.getRevenue());
+            ps.setInt(6, report.getReceivables());
+            ps.setDate(7, Date.valueOf(report.getStartDate()));
+            ps.setDate(8, Date.valueOf(report.getEndDate()));
+            
+            ps.executeUpdate();
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return result;
     }
-
-    // Doanh thu theo tháng -> trả map: ngày -> tổng trong ngày
-    public static Map<String, Double> revenueByMonth(int year, int month) {
-        Map<String, Double> result = new LinkedHashMap<>();
-        String sql = "SELECT DATE(created_at) as ngay, SUM(total) as tong " +
-                     "FROM orders WHERE status='PAID' AND YEAR(created_at)=? AND MONTH(created_at)=? " +
-                     "GROUP BY DATE(created_at) ORDER BY DATE(created_at)";
+    
+    public static void delete (String reportID) {
+        String sql = "DELETE FROM reports WHERE ReportID = ?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, year);
-            ps.setInt(2, month);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    result.put(rs.getDate("ngay").toString(), rs.getDouble("tong"));
-                }
-            }
-        } catch (Exception ex) {
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, reportID);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return result;
     }
+ 
+    public static List<Report> getReportList() {
+        List<Report> dataList = new ArrayList<>();
+        String sql = "SELECT * FROM Reports";
+
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Report p = new Report(
+                        rs.getString("ReportID"),
+                        rs.getString("ManagerID"),
+                        rs.getString("StaffID"),
+                        rs.getInt("OrderQuantity"),
+                        rs.getInt("Revenue"),
+                        rs.getInt("Receivables"),
+                        rs.getDate("startDate").toLocalDate(),
+                        rs.getDate("endDate").toLocalDate()
+                );
+                dataList.add(p);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return dataList;
+    }
+    
+    public static String getNextReportID () {
+        List<String> reportIDList = ReportModify.getReportIDList();
+        reportIDList.sort((a, b) -> a.compareTo(b));
+        String reportIDLast = reportIDList.get(reportIDList.size() - 1);
+        int lastID = Integer.parseInt(reportIDLast.substring(1));
+        System.out.println(lastID);
+        return String.format("R%d", lastID + 1);
+    }
+    
+    public static Report createReport (LocalDate startDate, LocalDate endDate, String reportID, String managerID, String staffID) {
+        Report newReport = null;
+        String sql = """
+                SELECT COUNT(*) as soluong, SUM(TotalAmount) as tong 
+                FROM Orders WHERE OrderDate >= ? AND OrderDate <= ? AND OrderStatus = 'Đã thanh toán'
+            """;
+        try (Connection conn = DBConnection.getConnection()) {
+            
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setDate(1, java.sql.Date.valueOf(startDate));
+            ps.setDate(2, java.sql.Date.valueOf(endDate));
+            ResultSet rs = ps.executeQuery();
+            int soluong = 0;
+            int tong = 0;
+            if(rs.next()) {
+                soluong = rs.getInt("soluong");
+                tong = rs.getInt("tong");
+            }
+            newReport = new Report( reportID, managerID, staffID, soluong, tong, 0, startDate, endDate );
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return newReport;
+    }
+    
+    public static List<String> getReportIDList() {
+        List<String> dataList = new ArrayList<>();
+
+        String sql = "SELECT ReportID FROM reports";
+
+        try (Connection conn = DBConnection.getConnection()){
+            
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataList.add(rs.getString("ReportID"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return dataList;
+    }
+    
+    public static List<Object[]> getReportDetail (LocalDate startDate, LocalDate endDate) {
+        List<Object[]> dataList = new ArrayList<>();
+
+        String sql = """
+            SELECT 
+                p.ProductName AS ProductName,
+                SUM(od.Quantity) AS amountSell,
+                SUM(od.SubTotal) AS moneySell
+            FROM (  
+                    SELECT * FROM Orders 
+                    WHERE OrderDate >= ? AND OrderDate <= ? AND OrderStatus = 'Đã thanh toán'     
+                ) AS o
+            JOIN 
+                OrderDetail od ON o.OrderID = od.OrderID
+            JOIN
+                Products p ON od.ProductID = p.ProductID
+            GROUP BY 
+                p.ProductName
+            ORDER BY
+                moneySell
+        """;
+        try (Connection conn = DBConnection.getConnection()){
+            
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, startDate.toString());
+            ps.setString(2, endDate.toString());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Object[] row = new Object[3];
+                row[0] = rs.getString("ProductName");
+                row[1] = rs.getInt("amountSell");
+                row[2] = rs.getInt("moneySell");
+                dataList.add(row);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return dataList;
+    }
+    
 }

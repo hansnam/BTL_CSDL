@@ -7,24 +7,25 @@ import java.util.ArrayList;
 
 
 public class Order {
-    private String id, status, date, Cus_id, Emp_id;
-    private int QuantityType;
-    private int TotalAmount;
+    
+    private String id, status, date, CusID, EmpID;
+    private int quantityType;
+    private int totalAmount;
     private List<OrderDetail> items = new ArrayList<>();
     
-    public Order () {}
+    public Order () {};
 
-    public Order(String id, String status, String date, String Cus_id, String Emp_id, int TotalAmount, int QuantityType) {
+    public Order(String id, String status, String date, String CusID, String EmpID, int totalAmount, int quantityType) {
         this.id = id;
         this.status = status;
         this.date = date;
-        this.Cus_id = Cus_id;
-        this.Emp_id = Emp_id;
-        this.TotalAmount = TotalAmount;
-        this.QuantityType = QuantityType;
+        this.CusID = CusID;
+        this.EmpID = EmpID;
+        this.totalAmount = totalAmount;
+        this.quantityType = quantityType;
     }
 
-    public String getId() {
+    public String getID() {
         return id;
     }
 
@@ -35,28 +36,28 @@ public class Order {
     public String getDate() {
         return date;
     }
-
-    public String getCus_id() {
-        return Cus_id;
+    
+    public String getCusID() {
+        return CusID;
     }
 
-    public String getEmp_id() {
-        return Emp_id;
+    public String getEmpID() {
+        return EmpID;
     }
 
-    public double getTotalAmount() {
-        return TotalAmount;
+    public int getTotalAmount() {
+        return totalAmount;
     }
 
     public int getQuantityType() {
-        return QuantityType;
+        return quantityType;
     }
 
     public List<OrderDetail> getItems() {
         return items;
     }
 
-    public void setId(String id) {
+    public void setID(String id) {
         this.id = id;
     }
 
@@ -68,20 +69,20 @@ public class Order {
         this.date = date;
     }
 
-    public void setCus_id(String Cus_id) {
-        this.Cus_id = Cus_id;
+    public void setCusID(String CusID) {
+        this.CusID = CusID;
     }
 
-    public void setEmp_id(String Emp_id) {
-        this.Emp_id = Emp_id;
+    public void setEmpID(String EmpID) {
+        this.EmpID = EmpID;
     }
 
-    public void setQuantityType(int QuantityType) {
-        this.QuantityType = QuantityType;
+    public void setQuantityType(int quantityType) {
+        this.quantityType = quantityType;
     }
 
-    public void setTotalAmount(int TotalAmount) {
-        this.TotalAmount = TotalAmount;
+    public void setTotalAmount(int totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public void setItems(List<OrderDetail> items) {
@@ -93,8 +94,8 @@ public class Order {
         for (OrderDetail i : items) {
             sum += i.getSubTotal();
         }
-        this.TotalAmount = sum;
-        return this.TotalAmount;
+        this.totalAmount = sum;
+        return this.totalAmount;
     }
     
 }

@@ -1,4 +1,5 @@
 /* Hans Nam */
+
 package dao;
 
 import java.sql.Connection;
@@ -8,71 +9,66 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import models.Order;
 import models.OrderDetail;
 import printstore_app.DBConnection;
 
 public class OrderModify {
-
+    
     public static List<Order> getOrderList() {
         List<Order> datalist = new ArrayList<>();
         String sql = """
-                     select OrderID, CustomerID, QuantityType, TotalAmount, OrderDate, OrderStatus
-                     from Orders
-                     order by Order_Dtae DESC
-                     """;
-        try (Connection conn = DBConnection.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql);
+                    select OrderID, CustomerID, QuantityType, TotalAmount, OrderDate, OrderStatus
+                    from Orders
+                    order by OrderDate DESC
+                    """;
+        
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)){
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            while(rs.next()) {
                 Order o = new Order();
-                o.setId(rs.getString("OrderID"));
-                o.setCus_id(rs.getString("CustomerID"));
+                o.setID(rs.getString("OrderID"));
+                o.setCusID(rs.getString("CustomerID"));
                 o.setQuantityType(rs.getInt("QuantityType"));
                 o.setTotalAmount(rs.getInt("TotalAmount"));
                 Timestamp t = rs.getTimestamp("OrderDate");
-                if (t != null) {
-                    o.setDate(t.toLocalDateTime().toString());
-                }
+                if(t != null) o.setDate(t.toLocalDateTime().toString());
                 o.setStatus(rs.getString("OrderStatus"));
                 datalist.add(o);
-            }
-
+            }  
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return datalist;
     }
-
+    
     public static List<OrderDetail> getOrderDetailList(String orderId) {
         List<OrderDetail> datalist = new ArrayList<>();
         String sql = """
-                     select p.ProductName as product_name, od.Quantity, p.Price, od.SubTotal  
-                     from orderdetail od join  products p
-                     on od.ProductID = p.ProductID
-                     where od.OrderID = ?
-                     """;
-        try (Connection conn = DBConnection.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql);
+                    select p.ProductName, od.Quantity, p.Price, od.SubTotal  
+                    from orderdetail od join  products p
+                    on od.ProductID = p.ProductID
+                    where od.OrderID = ?
+                    """;
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)){
+            
             ps.setString(1, orderId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
+            try(ResultSet rs = ps.executeQuery()) {
+                while(rs.next()) {
                     OrderDetail d = new OrderDetail();
-                    d.setProductName(rs.getString("product_name"));
                     d.setQuantity(rs.getInt("Quantity"));
                     d.setPrice(rs.getInt("Price"));
                     datalist.add(d);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return datalist;
     }
-
+    
     public static ResultSet getOrderDetail(String orderID) throws SQLException {
         Connection conn = DBConnection.getConnection();
         String sql = """
@@ -88,7 +84,8 @@ public class OrderModify {
 
     public static boolean isOrderIdExists(String orderId) {
         String sql = "SELECT COUNT(*) FROM orders WHERE OrderID = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, orderId);
             ResultSet rs = stmt.executeQuery();
@@ -111,7 +108,7 @@ public class OrderModify {
 
         
         try (Connection conn = DBConnection.getConnection(); // Giả sử DBConnection.getConnection() là đúng
-                 PreparedStatement ps = conn.prepareStatement(sql)) {
+            PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, orderId);
 
@@ -123,7 +120,7 @@ public class OrderModify {
                     row[1] = rs.getString("ProductName");
                     row[2] = rs.getString("Price");
                     row[3] = rs.getInt("Quantity");
-                    row[4] = rs.getInt("SubTotal"); // Bạn có thể dùng getLong hoặc getDouble tùy kiểu dữ liệu
+                    row[4] = rs.getInt("SubTotal");
 
                     orderDetailsList.add(row);
                 }
@@ -139,24 +136,26 @@ public class OrderModify {
         List<Object[]> orderList = new ArrayList<>();
 
         String sql = """
-        SELECT 
-            o.OrderID,
-            o.CustomerID,
-            COUNT(DISTINCT od.ProductID) AS ProductTypes, -- đếm số loại sản phẩm
-            o.TotalAmount,
-            o.OrderDate,
-            o.OrderStatus
-        FROM 
-            orders o
-        LEFT JOIN 
-            orderdetail od ON o.OrderID = od.OrderID
-        GROUP BY 
-            o.OrderID, o.CustomerID, o.TotalAmount, o.OrderDate, o.OrderStatus
-        ORDER BY 
-            o.OrderDate DESC
+            SELECT 
+                o.OrderID,
+                o.CustomerID,
+                COUNT(DISTINCT od.ProductID) AS ProductTypes, -- đếm số loại sản phẩm
+                o.TotalAmount,
+                o.OrderDate,
+                o.OrderStatus
+            FROM 
+                orders o
+            LEFT JOIN 
+                orderdetail od ON o.OrderID = od.OrderID
+            GROUP BY 
+                o.OrderID, o.CustomerID, o.TotalAmount, o.OrderDate, o.OrderStatus
+            ORDER BY 
+                o.OrderDate DESC
         """;
 
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBConnection.getConnection(); 
+            PreparedStatement ps = conn.prepareStatement(sql); 
+            ResultSet rs = ps.executeQuery()) {
 
             int cnt = 1;
             while (rs.next()) {
@@ -164,7 +163,7 @@ public class OrderModify {
                 row[0] = cnt++;
                 row[1] = rs.getString("OrderID");
                 row[2] = rs.getString("CustomerID");
-                row[3] = rs.getInt("ProductTypes");     
+                row[3] = rs.getInt("ProductTypes");   
                 row[4] = rs.getInt("TotalAmount");
                 row[5] = rs.getTimestamp("OrderDate");
                 row[6] = rs.getString("OrderStatus");
@@ -182,7 +181,8 @@ public class OrderModify {
         String sql = "INSERT INTO orders (OrderID, CustomerID, TotalAmount, OrderDate, OrderStatus, ManagerID, QuantityType) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         //boolean orderSaved = OrderModify.insertOrder(orderId, customerId, totalAmount, orderDate, status, managerId);
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); 
+            PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, orderId);
             ps.setString(2, customerId);
@@ -202,15 +202,15 @@ public class OrderModify {
 
     public static boolean insertOrderDetail(String orderId, String productId, int quantity) {
         String sql = "INSERT INTO orderdetail (OrderID, ProductID, Quantity, SubTotal) VALUES (?, ?, ?, ?)";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); 
+            PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, orderId);
             ps.setString(2, productId);
             ps.setInt(3, quantity);
-
-            // Lấy giá sản phẩm để tính SubTotal
-            double price = ProductModify.getProductPriceById(productId);
-            ps.setInt(4, (int) (price * quantity));
+            // ✅ Lấy giá sản phẩm để tính SubTotal
+            int price = ProductModify.getProductPriceById(productId);
+            ps.setInt(4, price * quantity);
 
             return ps.executeUpdate() > 0;
 
@@ -250,6 +250,6 @@ public class OrderModify {
 
         return orderList;
     }
-
-    
+   
 }
+

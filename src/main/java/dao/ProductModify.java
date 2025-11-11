@@ -1,4 +1,4 @@
-/* Hans Nam */
+
 package dao;
 
 import java.sql.Connection;
@@ -22,7 +22,8 @@ public class ProductModify {
             sql += " WHERE ProductName LIKE ?";
         }
 
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
 
             if (keyword != null && !keyword.isEmpty()) {
                 ps.setString(1, "%" + keyword + "%");
@@ -49,12 +50,14 @@ public class ProductModify {
     //Thêm sản phẩm mới
     public static void insert(Product product) {
         String sql = "INSERT INTO products(ProductID, ProductName, Price, Descriptions) VALUES (?, ?, ?, ?)";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, product.getP_id());
-            ps.setString(2, product.getP_name());
-            ps.setDouble(3, product.getP_price());
-            ps.setString(4, product.getP_descript());
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, product.getID());
+            ps.setString(2, product.getName());
+            ps.setInt(3, product.getPrice());
+            ps.setString(4, product.getDescriptions());
 
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -65,12 +68,14 @@ public class ProductModify {
     //Cập nhật thông tin sản phẩm
     public static void update(Product product) {
         String sql = "UPDATE products SET ProductName = ?, Price = ?, Descriptions = ? WHERE ProductID = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, product.getP_name());
-            ps.setDouble(2, product.getP_price());
-            ps.setString(3, product.getP_descript());
-            ps.setString(4, product.getP_id());
+            ps.setString(1, product.getName());
+            ps.setInt(2, product.getPrice());
+            ps.setString(3, product.getDescriptions());
+            ps.setString(4, product.getID());
 
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -78,10 +83,11 @@ public class ProductModify {
         }
     }
 
-    //Xóa sản phẩm
+    // 🔹 Xóa sản phẩm
     public static void delete(String productId) {
         String sql = "DELETE FROM products WHERE ProductID = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, productId);
             ps.executeUpdate();
@@ -94,7 +100,8 @@ public class ProductModify {
         String productId = null;
         String sql = "SELECT ProductID FROM products WHERE ProductName = ?";
 
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); 
+            PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, productName);
 
@@ -109,13 +116,15 @@ public class ProductModify {
         return productId;
     }
 
-    public static double getProductPriceById(String productId) {
+    public static int getProductPriceById(String productId) {
         String sql = "SELECT Price FROM products WHERE ProductID = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); 
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            
             ps.setString(1, productId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return rs.getDouble("Price");
+                return rs.getInt("Price");
             }
         } catch (SQLException e) {
             e.printStackTrace();

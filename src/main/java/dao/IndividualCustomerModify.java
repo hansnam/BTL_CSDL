@@ -8,14 +8,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import models.Customer;
 import models.IndividualCus;
 import printstore_app.DBConnection;
 
-
 public class IndividualCustomerModify {
+    
     // lấy tất cả dữ liệu
-public static List<IndividualCus> getIndividualCusList(String s) {
+    public static List<IndividualCus> getIndividualCusList(String s) {
         List<IndividualCus> datalist = new ArrayList<>();
         Connection conn = null;
         PreparedStatement statement = null;
@@ -74,21 +73,20 @@ public static List<IndividualCus> getIndividualCusList(String s) {
 
     public static void insert(IndividualCus c) {
         String sql1 = "INSERT INTO Customers (CustomerID, Phone, Email, Address) VALUES (?, ?, ?, ?)";
-        String sql2 = "INSERT INTO Individual_Cus (IndividualID, ICName, Gender) VALUES (?, ?, ?)";
+        String sql2 = "INSERT INTO IndividualCus (IndividualID, ICName, Gender) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
 
             try (PreparedStatement st1 = conn.prepareStatement(sql1);
-                 PreparedStatement st2 = conn.prepareStatement(sql2)) {
-
-                st1.setString(1, c.getCustomer_ID());
+                PreparedStatement st2 = conn.prepareStatement(sql2)) {
+                
+                st1.setString(1, c.getCustomerID());
                 st1.setString(2, c.getPhone());
                 st1.setString(3, c.getEmail());
                 st1.setString(4, c.getAddress());
                 st1.executeUpdate();
-
-                st2.setString(1, c.getCustomer_ID());
-                st2.setString(2, c.getIC_name());
+                st2.setString(1, c.getCustomerID());
+                st2.setString(2, c.getICName());
                 st2.setString(3, c.getGender());
                 st2.executeUpdate();
 
@@ -104,7 +102,7 @@ public static List<IndividualCus> getIndividualCusList(String s) {
     }
     
     public static void update (IndividualCus c) {
-        String sql1 = "UPDATE Customers SET Phone=?, Email=?, Address=? WHERE Customer_ID=?";
+        String sql1 = "UPDATE Customers SET Phone=?, Email=?, Address=? WHERE CustomerID=?";
         String sql2 = "UPDATE IndividualCus SET ICName=?, Gender=? WHERE IndividualID=?";
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -114,12 +112,12 @@ public static List<IndividualCus> getIndividualCusList(String s) {
                 st1.setString(1, c.getPhone());
                 st1.setString(2, c.getEmail());
                 st1.setString(3, c.getAddress());
-                st1.setString(4, c.getCustomer_ID());
+                st1.setString(4, c.getCustomerID());
                 st1.executeUpdate();
 
-                st2.setString(1, c.getIC_name());
+                st2.setString(1, c.getICName());
                 st2.setString(2, c.getGender());
-                st2.setString(3, c.getCustomer_ID());
+                st2.setString(3, c.getCustomerID());
                 st2.executeUpdate();
 
                 conn.commit();
@@ -154,10 +152,6 @@ public static List<IndividualCus> getIndividualCusList(String s) {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            }
         }
-
-    public static Object getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

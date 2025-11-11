@@ -2,13 +2,13 @@
 
 package dao;
 
-
 import java.sql.*;
 import java.util.*;
 import models.Manager;
 import printstore_app.DBConnection;
 
-public class ManagerModify {
+public class ManagerModify {    
+    
     public static List<Manager> getManagerList(String s) {
         List<Manager> datalist = new ArrayList<>();
         Connection conn = null;
@@ -23,7 +23,7 @@ public class ManagerModify {
                     join managers m on e.EmployeeID = m.ManagerID
                          """;
             if (s != null && !s.isEmpty()) {
-                sql += " WHERE E_Name like ?";
+                sql += " WHERE EName like ?";
             }
             statement = conn.prepareStatement(sql);
             if (s != null && !s.isEmpty()) {
@@ -97,7 +97,6 @@ public class ManagerModify {
         }
     }
 
-    
     public static void update(Manager m) {
         String sql1 = "UPDATE Employees SET EName=?, Gender=?, Phone=?, Email=?, Salary=? WHERE EmployeeID =?";
         String sql2 = "UPDATE Managers SET Title=? WHERE ManagerID=?";
@@ -129,9 +128,8 @@ public class ManagerModify {
         }
     }
 
-    
     public static void delete(String id) {
-        String sql1 = "DELETE FROM Managers WHERE MângerID = ?";
+        String sql1 = "DELETE FROM Managers WHERE ManangerID = ?";
         String sql2 = "DELETE FROM Employees WHERE EmployeeID = ?";
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -154,5 +152,55 @@ public class ManagerModify {
             e.printStackTrace();
         }
     }
+    
+    public static List<String> getManagerIDList() {
+        List<String> dataList = new ArrayList<>();
+
+        String sql = "SELECT ManagerID FROM managers";
+
+        try (Connection conn = DBConnection.getConnection()){
+            
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataList.add(rs.getString("ManagerID"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return dataList;
+    }
+    
+    public static Manager getManagerByID(String managerID) {
+        
+        try (Connection conn = DBConnection.getConnection()){
+            
+            String sql = """
+                select * from employees e
+                join managers m on e.EmployeeID = m.ManagerID
+                where e.EmployeeID = ?
+            """;
+          
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, managerID);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                return new Manager (
+                    rs.getString("EmployeeID"),
+                    rs.getString("EName"),
+                    rs.getString("Gender"),
+                    rs.getString("Phone"),
+                    rs.getString("Email"),
+                    rs.getInt("Salary"),
+                    rs.getString("Title")
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    
 }
 

@@ -10,12 +10,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.JOptionPane;
 import java.awt.Color;
+import java.awt.HeadlessException;
 import java.io.File;
+import java.io.IOException;
 
 public class invoiceLayout {
 
     public static void exportPDF(String orderId, String customerId, String customerName, String address, String orderDate, List<Object[]> details) {
-        String dirPath = "Hoá Đơn";
+        String dirPath = "save_file/Hoá Đơn";
         String filePath = dirPath + "/HoaDon_" + orderId + ".pdf";
 
         try {
@@ -62,7 +64,7 @@ public class invoiceLayout {
 
             // Logo góc phải — nếu không tìm thấy logo sẽ thêm ô rỗng (không lỗi)
             try {
-                File logoFile = new File("logo.png");
+                File logoFile = new File("image/logo.png");
                 if (logoFile.exists()) {
                     Image logo = Image.getInstance(logoFile.getAbsolutePath());
                     logo.scaleAbsolute(70, 70);
@@ -76,7 +78,7 @@ public class invoiceLayout {
                     logoCell.setBorder(Rectangle.NO_BORDER);
                     companyTable.addCell(logoCell);
                 }
-            } catch (Exception e) {
+            } catch (BadElementException | IOException e) {
                 // Nếu có lỗi khi load logo vẫn không làm crash — thêm ô rỗng
                 PdfPCell logoCell = new PdfPCell(new Phrase(" ", fontNormal));
                 logoCell.setBorder(Rectangle.NO_BORDER);
@@ -130,7 +132,7 @@ public class invoiceLayout {
                 table.addCell(new Phrase(item[2].toString(), fontNormal));
                 table.addCell(new Phrase(item[4].toString(), fontNormal));
 
-                total += (int) Double.parseDouble(item[4].toString());
+                total += Integer.parseInt(item[4].toString());
             }
 
             // Thêm hàng tổng tiền
@@ -176,7 +178,7 @@ public class invoiceLayout {
             JOptionPane.showMessageDialog(null, "Đã xuất hoá đơn PDF thành công!\n" + filePath);
             java.awt.Desktop.getDesktop().open(new File(filePath));
 
-        } catch (Exception e) {
+        } catch (DocumentException | HeadlessException | IOException | NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Lỗi khi xuất PDF: " + e.getMessage());
             e.printStackTrace();
         }

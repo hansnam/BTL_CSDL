@@ -4,30 +4,26 @@ package models;
 
 
 public class OrderDetail {
-    private String Od_id, P_id, Order_id;
+
+    private String productID, orderID;
     private int quantity;
     private int price;
-    private String ProductName;
     
-    public OrderDetail() {}
+    public OrderDetail () {};
 
-    public OrderDetail(String Od_id, String P_id, String Order_id, int quantity, int price) {
-        this.Od_id = Od_id;
-        this.P_id = P_id;
-        this.Order_id = Order_id;
+    public OrderDetail(String orderID, String productID, int quantity, int price) {
+        this.orderID = orderID;
+        this.productID = productID;
         this.quantity = quantity;
         this.price = price;
     }
-    public String getOd_id() {
-        return Od_id;
-    }
-    
-    public String getP_id() {
-        return P_id;
+
+    public String getProductID() {
+        return productID;
     }
 
-    public String getOrder_id() {
-        return Order_id;
+    public String getOrderID() {
+        return orderID;
     }
 
     public int getQuantity() {
@@ -38,20 +34,16 @@ public class OrderDetail {
         return price;
     }
     
-    public String getProductName() {
-        return ProductName;
-    }
-    
-     public void setOd_id(String Od_id) {
-        this.Od_id = Od_id;
+    public void getOrderID(String orderID) {
+        this.orderID = orderID;
     }
 
-    public void setP_id(String P_id) {
-        this.P_id = P_id;
+    public void setproductID(String productID) {
+        this.productID = productID;
     }
 
-    public void setOrder_id(String Order_id) {
-        this.Order_id = Order_id;
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
     }
 
     public void setQuantity(int quantity) {
@@ -62,11 +54,8 @@ public class OrderDetail {
         this.price = price;
     }
     
-    public double getSubTotal() {
+    public int getSubTotal() {
         return quantity * price;
     }
-    
-    public void setProductName(String pn) {
-        this.ProductName = pn;
-    }
+
 }

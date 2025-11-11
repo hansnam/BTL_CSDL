@@ -8,6 +8,7 @@ ui\MainFrame$1.class
 ui\CustomerFrame$1.class
 ui\CustomerFrame$5.class
 ui\ProductFrame$2.class
+ui\ReportFrame$4.class
 dao\StaffModify.class
 models\Manager.class
 ui\MainFrame$12.class
@@ -22,9 +23,11 @@ ui\CustomerFrame$4.class
 utils\reportLayout.class
 ui\EmployeeFrame$2.class
 ui\OrderFrame$4.class
+ui\ReportFrame$1.class
 ui\OrderDetailFrame$1.class
 ui\MainFrame.class
 models\Employee.class
+ui\ReportFrame$5.class
 dao\ReportModify.class
 ui\ProductFrame$1.class
 dao\CorporateCustomerModify.class
@@ -36,6 +39,7 @@ ui\MainFrame$4.class
 ui\ProductFrame$4.class
 ui\CustomerFrame$3.class
 ui\MainFrame$6.class
+ui\ReportFrame$2.class
 ui\CustomerFrame$10.class
 ui\OrderFrame$1.class
 ui\OrderDetailFrame.class
@@ -56,7 +60,6 @@ ui\ProductFrame$5.class
 printstore_app\Main.class
 ui\ProductFrame$3.class
 ui\EmployeeFrame.class
-ui\reportLayout.class
 ui\CustomerFrame$6.class
 ui\ProductFrame.class
 ui\EmployeeFrame$1.class
@@ -66,4 +69,5 @@ models\Product.class
 models\Customer.class
 ui\MainFrame$11.class
 ui\MainFrame$9.class
+ui\ReportFrame$3.class
 ui\CustomerFrame$13.class

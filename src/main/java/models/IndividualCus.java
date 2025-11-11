@@ -4,28 +4,28 @@ package models;
 
 
 public class IndividualCus extends Customer {
-    private String IC_Name, Gender;
+    private String ICName, Gender;
 
-    public IndividualCus(String Cus_id, String name, String gender, String phone, String email, String address) {
-        super(Cus_id, phone, email, address);
-        this.IC_Name = name;
+    public IndividualCus(String Cusid, String name, String gender, String phone, String email, String address) {
+        super(Cusid, phone, email, address);
+        this.ICName = name;
         this.Gender = gender;
     }
 
-    public String getIC_name() {
-        return IC_Name;
+    public String getICName() {
+        return ICName;
     }
 
     public String getGender() {
         return Gender;
     }
 
-    public void setIC_name(String IC_name) {
-        this.IC_Name = IC_name;
+    public void setICName(String ICName) {
+        this.ICName = ICName;
     }
 
-    public void setIC_gender(String IC_gender) {
-        this.Gender = IC_gender;
+    public void setICGender(String ICGender) {
+        this.Gender = ICGender;
     }
 
     

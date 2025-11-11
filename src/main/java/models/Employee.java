@@ -7,10 +7,10 @@ public class Employee {
     private String id, name, gender, phone, email;
     int salary;
 
-    public Employee(String E_id, String E_name, String E_Gender, String Phone, String Email, int salary) {
-        this.id = E_id;
-        this.name = E_name;
-        this.gender = E_Gender;
+    public Employee(String Eid, String Ename, String EGender, String Phone, String Email, int salary) {
+        this.id = Eid;
+        this.name = Ename;
+        this.gender = EGender;
         this.phone = Phone;
         this.email = Email;
         this.salary = salary;
@@ -40,16 +40,16 @@ public class Employee {
         return salary;
     }
 
-    public void setID(String E_id) {
-        this.id = E_id;
+    public void setID(String Eid) {
+        this.id = Eid;
     }
 
-    public void setname(String E_name) {
-        this.name = E_name;
+    public void setName(String Ename) {
+        this.name = Ename;
     }
 
-    public void setGender(String E_Gender) {
-        this.gender = E_Gender;
+    public void setGender(String EGender) {
+        this.gender = EGender;
     }
 
     public void setPhone(String Phone) {

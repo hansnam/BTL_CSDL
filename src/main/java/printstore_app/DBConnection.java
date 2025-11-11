@@ -11,6 +11,7 @@ public class DBConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/sale_management";
     private static final String USER = "root";
     private static final String PASSWORD = "123456"; // nếu có mật khẩu MySQL thì điền vào
+//    private static final String PASSWORD = "lehailongt"; // nếu có mật khẩu MySQL thì điền vào
 
     public static Connection getConnection() {
         Connection conn = null;

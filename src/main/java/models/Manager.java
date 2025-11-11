@@ -6,8 +6,8 @@ package models;
 public class Manager extends Employee {
     private String title;
 
-    public Manager(String E_id, String E_name, String E_Gender, String Phone, String Email, int salary, String title) {
-        super(E_id, E_name, E_Gender, Phone, Email, salary);
+    public Manager(String EmployeeID, String Ename, String EGender, String Phone, String Email, int salary, String title) {
+        super(EmployeeID, Ename, EGender, Phone, Email, salary);
         this.title = title;
     }
 

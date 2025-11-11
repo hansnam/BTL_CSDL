@@ -2,13 +2,13 @@
 
 package dao;
 
-
 import java.sql.*;
 import java.util.*;
 import models.Staff;
 import printstore_app.DBConnection;
 
 public class StaffModify {
+    
     public static List<Staff> getStaffList(String s) {
         List<Staff> datalist = new ArrayList<>();
         Connection conn = null;
@@ -72,7 +72,7 @@ public class StaffModify {
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement st1 = conn.prepareStatement(sql1);
-                 PreparedStatement st2 = conn.prepareStatement(sql2)) {
+                PreparedStatement st2 = conn.prepareStatement(sql2)) {
 
                 st1.setString(1, s.getID());
                 st1.setString(2, s.getName());
@@ -104,7 +104,7 @@ public class StaffModify {
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement st1 = conn.prepareStatement(sql1);
-                 PreparedStatement st2 = conn.prepareStatement(sql2)) {
+                PreparedStatement st2 = conn.prepareStatement(sql2)) {
                 
                 st1.setString(1, s.getName());
                 st1.setString(2, s.getGender());
@@ -131,12 +131,13 @@ public class StaffModify {
 
 
     public static void delete(String id) {
-        String sql1 = "DELETE FROM Staffs WHERE Staff_ID = ?";
-        String sql2 = "DELETE FROM Employees WHERE Employee_ID = ?";
+        String sql1 = "DELETE FROM Staffs WHERE StaffID = ?";
+        String sql2 = "DELETE FROM Employees WHERE EmployeeID = ?";
+
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement st1 = conn.prepareStatement(sql1);
-                 PreparedStatement st2 = conn.prepareStatement(sql2)) {
+                PreparedStatement st2 = conn.prepareStatement(sql2)) {
 
                 st1.setString(1, id);
                 st1.executeUpdate();
@@ -154,5 +155,55 @@ public class StaffModify {
             e.printStackTrace();
         }
     }
+    
+    public static List<String> getStaffIDList() {
+        List<String> dataList = new ArrayList<>();
+
+        String sql = "SELECT StaffID FROM staffs";
+
+        try (Connection conn = DBConnection.getConnection()){
+            
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                dataList.add(rs.getString("StaffID"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return dataList;
+    }
+    
+    public static Staff getStaffByID (String staffID) {
+        
+        try (Connection conn = DBConnection.getConnection()) {
+            
+            String sql = """
+                select * from employees e
+                join staffs s on e.EmployeeID = s.StaffID
+                where e.EmployeeID = ?
+            """;
+          
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, staffID);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                return new Staff (
+                    rs.getString("EmployeeID"),
+                    rs.getString("EName"),
+                    rs.getString("Gender"),
+                    rs.getString("Phone"),
+                    rs.getString("Email"),
+                    rs.getInt("Salary"),
+                    rs.getString("HireDate")
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    
 }
 
