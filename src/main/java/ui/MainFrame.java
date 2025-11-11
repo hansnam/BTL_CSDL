@@ -552,12 +552,12 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
         // TODO add your handling code here:
-        String s = JOptionPane.showInputDialog("Nhập tên sản phẩm cần tìm kiếm (hoặc nhập * để hiện tất cả): ");
+        String s = JOptionPane.showInputDialog("Nhập tên sản phẩm cần tìm kiếm (hoặc nhập enter để hiện tất cả): ");
 
         if (s == null) {
             return;  // người dùng bấm Cancel
         }
-        if (s.trim().equals("*") || s.trim().isEmpty()) {
+        if (s.trim().isEmpty()) {
             showData(null);
         } else {
             s = "%" + s.trim() + "%";
