@@ -122,29 +122,18 @@ CREATE TABLE Reports (
     CHECK (DATEDIFF(EndDate, StartDate) >= 7)
 );
 
--- CREATE TABLE Processing (
--- 	OrderID		CHAR(10)  NOT NULL,
---     StaffID		CHAR(5)  NOT NULL,
---     Task		VARCHAR(20)  NOT NULL,
---     ProcessDate DATE  NOT NULL,
---     PRIMARY KEY (OrderID, StaffID),
---     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
--- 		ON UPDATE CASCADE
---         ON DELETE CASCADE,
--- 	FOREIGN KEY (StaffID) REFERENCES Staffs(StaffID)
--- 		ON UPDATE CASCADE
--- );
-
--- CREATE TABLE Payment (
--- 	PaymentID		CHAR(10)  PRIMARY KEY,
---     OrderID			CHAR(10)  UNIQUE  NOT NULL,
---     PaymentMethod	VARCHAR(30)  NOT NULL,
---     PaymentDate		DATE  NOT NULL,
---     PaymentStatus	VARCHAR(30)  NOT NULL,
---     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
--- 		ON UPDATE CASCADE
---         ON DELETE CASCADE
--- );
+CREATE TABLE Processing (
+ 	OrderID		CHAR(10)  NOT NULL,
+     StaffID		CHAR(5)  NOT NULL,
+     Task		VARCHAR(20)  NOT NULL,
+     ProcessDate DATE  NOT NULL,
+     PRIMARY KEY (OrderID, StaffID),
+     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
+ 		ON UPDATE CASCADE
+         ON DELETE CASCADE,
+ 	FOREIGN KEY (StaffID) REFERENCES Staffs(StaffID)
+ 		ON UPDATE CASCADE
+ );
 
 -- Bảng 1: Employees (15 người)
 INSERT INTO Employees VALUES
