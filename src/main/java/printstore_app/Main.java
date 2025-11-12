@@ -8,7 +8,7 @@ import ui.MainFrame;
 
 
 public class Main {
-public static void main(String[] args) {
+    public static void main(String[] args) {
         Connection conn = DBConnection.getConnection();
         if (conn != null) {
             System.out.println("Kết nối thành công tới cơ sở dữ liệu " + Config.DB_NAME);

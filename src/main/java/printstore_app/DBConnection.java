@@ -5,21 +5,17 @@ package printstore_app;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
-public class DBConnection {
-
-    private static final String URL = "jdbc:mysql://localhost:3306/sale_management";
-    private static final String USER = "root";
-    private static final String PASSWORD = "123456"; // nếu có mật khẩu MySQL thì điền vào
-//    private static final String PASSWORD = "lehailongt"; // nếu có mật khẩu MySQL thì điền vào
+public class DBConnection implements Config {
 
     public static Connection getConnection() {
         Connection conn = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             System.out.println("Kết nối MySQL thành công!");
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Lỗi kết nối MySQL: " + e.getMessage());
         }
         return conn;

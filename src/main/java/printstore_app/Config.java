@@ -4,13 +4,13 @@ package printstore_app;
 
 
 public interface Config {
-    String DB_URL = "jdbc:mysql://localhost:3306/sale_management";
+    public String DB_URL = "jdbc:mysql://localhost:3306/sale_management";
     public static final String DB_HOST = "localhost";
     public static final String DB_PORT = "3306";
     public static final String DB_NAME = "sale_management";
     public static final String DB_USER = "root";
-    public static final String DB_PASSWORD = "123456";
-//    public static final String DB_PASSWORD = "lehailongt";
+//    public static final String DB_PASSWORD = "123456";
+    public static final String DB_PASSWORD = "lehailongt";
 
     // Thông tin ứng dụng
     public static final String APP_TITLE = "Phần mềm quản lý cửa hàng in ấn";

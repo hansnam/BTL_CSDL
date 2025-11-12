@@ -85,8 +85,10 @@ public class ReportModify {
     public static Report createReport (LocalDate startDate, LocalDate endDate, String reportID, String managerID, String staffID) {
         Report newReport = null;
         String sql = """
-                SELECT COUNT(*) as soluong, SUM(TotalAmount) as tong 
-                FROM Orders WHERE OrderDate >= ? AND OrderDate <= ? AND OrderStatus = 'Đã thanh toán'
+                SELECT OrderStatus, COUNT(*) as soluong, SUM(TotalAmount) as tong 
+                FROM Orders WHERE OrderDate >= ? AND OrderDate <= ?
+                GROUP BY OrderStatus
+                ORDER BY OrderStatus
             """;
         try (Connection conn = DBConnection.getConnection()) {
             
@@ -95,12 +97,17 @@ public class ReportModify {
             ps.setDate(2, java.sql.Date.valueOf(endDate));
             ResultSet rs = ps.executeQuery();
             int soluong = 0;
-            int tong = 0;
+            int loinhuan = 0;
+            int congno = 0;
             if(rs.next()) {
-                soluong = rs.getInt("soluong");
-                tong = rs.getInt("tong");
+                soluong += rs.getInt("soluong");
+                loinhuan = rs.getInt("tong");
             }
-            newReport = new Report( reportID, managerID, staffID, soluong, tong, 0, startDate, endDate );
+            if(rs.next()) {
+                soluong += rs.getInt("soluong");
+                congno = rs.getInt("tong");
+            }
+            newReport = new Report( reportID, managerID, staffID, soluong, loinhuan, congno, startDate, endDate);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -135,7 +142,7 @@ public class ReportModify {
                 SUM(od.SubTotal) AS moneySell
             FROM (  
                     SELECT * FROM Orders 
-                    WHERE OrderDate >= ? AND OrderDate <= ? AND OrderStatus = 'Đã thanh toán'     
+                    WHERE OrderDate >= ? AND OrderDate <= ? AND OrderStatus = 'Đã hoàn thành'     
                 ) AS o
             JOIN 
                 OrderDetail od ON o.OrderID = od.OrderID

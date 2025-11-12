@@ -44,7 +44,7 @@ public class reportLayout {
             PdfPTable headerTable = new PdfPTable(2);
             headerTable.setWidthPercentage(100);
             headerTable.setWidths(new float[]{3, 1});
-            headerTable.setSpacingAfter(15f);
+            headerTable.setSpacingAfter(10f);
 
             // Company Info
             PdfPCell companyCell = new PdfPCell();
@@ -108,8 +108,8 @@ public class reportLayout {
             PdfPTable dateTable = new PdfPTable(2);
             dateTable.setWidthPercentage(80);
             dateTable.setHorizontalAlignment(Element.ALIGN_CENTER);
-            dateTable.setSpacingBefore(10f);
-            dateTable.setSpacingAfter(15f);
+//            dateTable.setSpacingBefore(10f);
+//            dateTable.setSpacingAfter(15f);
 
             DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             
@@ -126,8 +126,8 @@ public class reportLayout {
             float[] columnWidths = {0.8f, 3.5f, 1.5f, 2f};
             table.setWidths(columnWidths);
             table.setWidthPercentage(100);
-            table.setSpacingBefore(20f);
-            table.setSpacingAfter(25f);
+            table.setSpacingBefore(5f);
+//            table.setSpacingAfter(10f);
 
             // Table Header
             String[] headers = {"STT", "TÊN SẢN PHẨM", "SỐ LƯỢNG", "THÀNH TIỀN (VND)"};
@@ -182,7 +182,7 @@ public class reportLayout {
             
             Paragraph dateParagraph = new Paragraph(currentDate.format(vietnameseFormat), fontBold);
             dateParagraph.setAlignment(Element.ALIGN_RIGHT);
-            dateParagraph.setSpacingAfter(30f);
+            dateParagraph.setSpacingAfter(10f);
             document.add(dateParagraph);
 
             // Signature Table
@@ -200,9 +200,9 @@ public class reportLayout {
             staffTitle.setAlignment(Element.ALIGN_CENTER);
             staffCell.addElement(staffTitle);
             
-            Paragraph staffNamePara = new Paragraph("(" + staffName + ")", new Font(Font.HELVETICA, 11, Font.ITALIC, darkGray));
+            Paragraph staffNamePara = new Paragraph("(" + staffName + " )", new Font(Font.HELVETICA, 11, Font.ITALIC, darkGray));
             staffNamePara.setAlignment(Element.ALIGN_CENTER);
-            staffNamePara.setSpacingBefore(40f);
+            staffNamePara.setSpacingBefore(5f);
             staffCell.addElement(staffNamePara);
             
             signTable.addCell(staffCell);
@@ -218,18 +218,18 @@ public class reportLayout {
             
             Paragraph managerNamePara = new Paragraph("(" + managerName + ")", new Font(Font.HELVETICA, 11, Font.ITALIC, darkGray));
             managerNamePara.setAlignment(Element.ALIGN_CENTER);
-            managerNamePara.setSpacingBefore(40f);
+            managerNamePara.setSpacingBefore(5f);
             managerCell.addElement(managerNamePara);
             
             signTable.addCell(managerCell);
 
             document.add(signTable);
 
-            // ======= 6. FOOTER =======
-            Paragraph footer = new Paragraph("--- HẾT ---", new Font(Font.HELVETICA, 10, Font.ITALIC, Color.GRAY));
-            footer.setAlignment(Element.ALIGN_CENTER);
-            footer.setSpacingBefore(30f);
-            document.add(footer);
+//            // ======= 6. FOOTER =======
+//            Paragraph footer = new Paragraph("--- HẾT ---", new Font(Font.HELVETICA, 10, Font.ITALIC, Color.GRAY));
+//            footer.setAlignment(Element.ALIGN_CENTER);
+//            footer.setSpacingBefore(20f);
+//            document.add(footer);
 
             // ======= CLOSE DOCUMENT =======
             document.close();
@@ -262,8 +262,8 @@ public class reportLayout {
         cell.setHorizontalAlignment(alignment);
         cell.setBorder(border);
         cell.setPadding(8);
-        cell.setPaddingTop(10);
-        cell.setPaddingBottom(10);
+        cell.setPaddingTop(8);
+        cell.setPaddingBottom(8);
         return cell;
     }
 }

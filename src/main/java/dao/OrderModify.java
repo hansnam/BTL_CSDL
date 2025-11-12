@@ -237,7 +237,7 @@ public class OrderModify {
                     rs.getString("OrderID"),
                     rs.getString("CustomerID"),
                     rs.getInt("QuantityType"),
-                    rs.getDouble("TotalAmount"),
+                    rs.getInt("TotalAmount"),
                     rs.getDate("OrderDate"),
                     rs.getString("OrderStatus")
                 };
