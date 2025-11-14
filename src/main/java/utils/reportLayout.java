@@ -178,7 +178,7 @@ public class reportLayout {
 
             // ======= 5. SIGNATURE AND DATE SECTION =======
             LocalDate currentDate = LocalDate.now();
-            DateTimeFormatter vietnameseFormat = DateTimeFormatter.ofPattern("'Ngày' dd 'tháng' MM 'năm' yyyy");
+            DateTimeFormatter vietnameseFormat = DateTimeFormatter.ofPattern("'Hà Nội, Ngày 'dd' tháng 'MM' năm 'yyyy");
             
             Paragraph dateParagraph = new Paragraph(currentDate.format(vietnameseFormat), fontBold);
             dateParagraph.setAlignment(Element.ALIGN_RIGHT);
