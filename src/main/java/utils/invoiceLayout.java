@@ -29,7 +29,7 @@ public class invoiceLayout {
 
             // ======= Font =======
             //Font fontTitle = new Font(Font.HELVETICA, 20, Font.BOLD, new Color(0, 102, 204));
-            Font fontTitle = new Font(Font.HELVETICA, 20, Font.BOLD, Color.RED);
+            Font fontTitle = new Font(Font.HELVETICA, 20, Font.BOLD, Color.BLUE);
 
             Font fontSub = new Font(Font.HELVETICA, 12, Font.BOLD);
             Font fontNormal = new Font(Font.HELVETICA, 11);
@@ -39,14 +39,13 @@ public class invoiceLayout {
             Paragraph title = new Paragraph("HOÁ ĐƠN BÁN HÀNG", fontTitle);
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
-            
+
             Font fontOrderId = new Font(Font.HELVETICA, 12, Font.BOLD, Color.BLACK);
             Paragraph orderIdPara = new Paragraph("Mã đơn hàng: " + orderId, fontOrderId);
             orderIdPara.setAlignment(Element.ALIGN_CENTER);
             orderIdPara.setSpacingAfter(10f); // khoảng cách bên dưới
             document.add(orderIdPara);
 
-            
             addSeparatorLine(document);
 
             // ======= 2. THÔNG TIN CÔNG TY (companyTable) =======
@@ -94,13 +93,26 @@ public class invoiceLayout {
             infoTable.setWidthPercentage(100);
             //infoTable.setWidths(new float[]{2.5f, 5f});
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
+            
+            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
+            String formattedOrderDate;
+
+            try {
+                LocalDateTime dateTime = LocalDateTime.parse(orderDate, inputFormatter);
+
+                formattedOrderDate = dateTime.format(outputFormatter);
+            } catch (Exception e) {
+                formattedOrderDate = orderDate;
+                System.err.println("Lỗi định dạng ngày đặt hàng: " + e.getMessage());
+            }
 
             // infoTable.addCell(createNoBorderCell("Mã đơn hàng: " + orderId, fontNormal));
             infoTable.addCell(createNoBorderCell("Mã khách hàng: " + customerId, fontNormal));
             infoTable.addCell(createNoBorderCell("Tên khách hàng: " + customerName, fontNormal));
             infoTable.addCell(createNoBorderCell("Hình thức thanh toán: Chuyển khoản", fontNormal));
-            infoTable.addCell(createNoBorderCell("Ngày đặt hàng: " + orderDate, fontNormal));
+            infoTable.addCell(createNoBorderCell("Ngày đặt hàng: " + formattedOrderDate, fontNormal));
             infoTable.addCell(createNoBorderCell("Ngày xuất hoá đơn: " + LocalDateTime.now().format(formatter), fontNormal));
             infoTable.addCell(createNoBorderCell("Địa chỉ giao hàng: " + address, fontNormal));
 
@@ -140,11 +152,13 @@ public class invoiceLayout {
             totalLabel.setColspan(4);
             totalLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
             totalLabel.setPadding(6);
+            totalLabel.setBorder(Rectangle.NO_BORDER);
             table.addCell(totalLabel);
 
             PdfPCell totalValue = new PdfPCell(new Phrase(String.format("%,d VND", total), fontBold));
             totalValue.setHorizontalAlignment(Element.ALIGN_RIGHT);
             totalValue.setPadding(6);
+            totalValue.setBorder(Rectangle.NO_BORDER);
             table.addCell(totalValue);
 
             document.add(table);
