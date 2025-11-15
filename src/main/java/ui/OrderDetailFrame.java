@@ -5,6 +5,7 @@ import dao.OrderModify;
 import java.util.List;
 import java.util.logging.Level;
 import javax.swing.table.DefaultTableModel;
+import utils.CustomizeHeaderTable;
 
 public class OrderDetailFrame extends javax.swing.JFrame {
     
@@ -16,6 +17,7 @@ public class OrderDetailFrame extends javax.swing.JFrame {
     public OrderDetailFrame(String orderID) {
         initComponents();
         setLocationRelativeTo(null);
+        CustomizeHeaderTable.customizeTableHeader(detailTable);
         
         this.orderID = orderID;
         tableModel = (DefaultTableModel) detailTable.getModel();
@@ -47,6 +49,7 @@ public class OrderDetailFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thông tin chi tiết hoá đơn");
 
+        detailTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         detailTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -56,19 +59,18 @@ public class OrderDetailFrame extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        detailTable.setRowHeight(22);
         jScrollPane1.setViewportView(detailTable);
         if (detailTable.getColumnModel().getColumnCount() > 0) {
-            detailTable.getColumnModel().getColumn(1).setResizable(false);
-            detailTable.getColumnModel().getColumn(2).setResizable(false);
-            detailTable.getColumnModel().getColumn(3).setResizable(false);
-            detailTable.getColumnModel().getColumn(4).setResizable(false);
+            detailTable.getColumnModel().getColumn(0).setMinWidth(40);
+            detailTable.getColumnModel().getColumn(0).setMaxWidth(100);
         }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

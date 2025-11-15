@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import models.Manager;
 import models.Staff;
+import utils.CustomizeHeaderTable;
 
 public class EmployeeFrame extends javax.swing.JFrame {
 
@@ -21,6 +22,8 @@ public class EmployeeFrame extends javax.swing.JFrame {
     public EmployeeFrame() {
         initComponents();
         setLocationRelativeTo(null);
+        CustomizeHeaderTable.customizeTableHeader(staffTable);
+        CustomizeHeaderTable.customizeTableHeader(managerTable);
         
         tableModelS = (DefaultTableModel) staffTable.getModel();
         Slist = StaffModify.getStaffList(null);
@@ -78,6 +81,9 @@ public class EmployeeFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("THÔNG TIN NHÂN SỰ");
 
+        jTabbedPane2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+
+        staffTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         staffTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -94,10 +100,14 @@ public class EmployeeFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        staffTable.setRowHeight(22);
         jScrollPane1.setViewportView(staffTable);
         if (staffTable.getColumnModel().getColumnCount() > 0) {
             staffTable.getColumnModel().getColumn(0).setMinWidth(40);
             staffTable.getColumnModel().getColumn(0).setMaxWidth(100);
+            staffTable.getColumnModel().getColumn(3).setMinWidth(50);
+            staffTable.getColumnModel().getColumn(3).setMaxWidth(100);
+            staffTable.getColumnModel().getColumn(5).setMinWidth(150);
         }
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -111,14 +121,15 @@ public class EmployeeFrame extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(32, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(55, 55, 55))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Thông tin nhân viên", jPanel2);
 
+        managerTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         managerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -127,26 +138,23 @@ public class EmployeeFrame extends javax.swing.JFrame {
                 "STT", "Mã nhân sự", "Họ và tên", "Giới tính", "Chức vụ", "Số điện thoại", "Email", "Lương"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-            };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, true, true
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        managerTable.setRowHeight(22);
         jScrollPane2.setViewportView(managerTable);
         if (managerTable.getColumnModel().getColumnCount() > 0) {
             managerTable.getColumnModel().getColumn(0).setMinWidth(40);
             managerTable.getColumnModel().getColumn(0).setMaxWidth(100);
-            managerTable.getColumnModel().getColumn(5).setResizable(false);
+            managerTable.getColumnModel().getColumn(3).setMinWidth(50);
+            managerTable.getColumnModel().getColumn(3).setMaxWidth(100);
+            managerTable.getColumnModel().getColumn(4).setMinWidth(100);
+            managerTable.getColumnModel().getColumn(6).setMinWidth(150);
         }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -154,16 +162,16 @@ public class EmployeeFrame extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addGap(14, 14, 14)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 967, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
+                .addGap(24, 24, 24)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Thông tin quản lý", jPanel1);
@@ -174,15 +182,15 @@ public class EmployeeFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1000, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addComponent(jTabbedPane2)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 538, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50))
+                .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
         );
 
         pack();

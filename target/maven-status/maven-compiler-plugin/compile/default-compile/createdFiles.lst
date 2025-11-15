@@ -48,6 +48,7 @@ ui\MainFrame$10.class
 ui\MainFrame$3.class
 ui\CustomerFrame$14.class
 dao\IndividualCustomerModify.class
+utils\CustomizeHeaderTable.class
 models\OrderDetail.class
 ui\CustomerFrame$7.class
 dao\ManagerModify.class
