@@ -83,7 +83,45 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         });
-
+        
+        cartTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    if (cartTable.isEditing()) {
+                        cartTable.getCellEditor().stopCellEditing();
+                    }
+                    int row = cartTable.getSelectedRow();
+                    int column = cartTable.getSelectedColumn();
+                    // Tìm đơn giá từ bảng sản phẩm
+                    String cartName = cartModel.getValueAt(row, 1).toString();
+                    int unitPrice = 0;
+                    for (int i = 0; i < productModel.getRowCount(); i++) {
+                        String productName = productModel.getValueAt(i, 1).toString();
+                        int productPrice = Integer.parseInt(productModel.getValueAt(i, 2).toString());
+                        if (cartName.equals(productName)) {
+                            unitPrice = productPrice;
+                        }
+                    }
+                    if (row >= 0 && column == 2) {
+                        try {
+                            int newQuantity = Integer.parseInt(cartModel.getValueAt(row, 2).toString());                
+                            if (newQuantity <= 0) {
+                                JOptionPane.showMessageDialog(null, "Số lượng sản phẩm phải là số dương.");
+                                cartModel.setValueAt(1, row, 2);
+                                cartModel.setValueAt(unitPrice * 1, row, 3);
+                            } else {
+                                cartModel.setValueAt(unitPrice * newQuantity, row, 3);
+                            }
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(null, "Số lượng phải là số nguyên.");
+                            cartModel.setValueAt(1, row, 2);
+                            cartModel.setValueAt(unitPrice * 1, row, 3);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void addToCart(int row) {
@@ -243,7 +281,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
