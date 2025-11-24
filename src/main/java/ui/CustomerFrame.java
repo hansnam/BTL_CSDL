@@ -274,10 +274,6 @@ public class CustomerFrame extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -286,7 +282,7 @@ public class CustomerFrame extends javax.swing.JFrame {
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(48, 48, 48)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(addressTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
+                            .addComponent(addressTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 844, Short.MAX_VALUE)
                             .addComponent(emailTxt)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -306,6 +302,10 @@ public class CustomerFrame extends javax.swing.JFrame {
                     .addComponent(delBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(saveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(51, 51, 51))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -371,23 +371,24 @@ public class CustomerFrame extends javax.swing.JFrame {
         jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel13.setText("Email");
 
-        taxCodeTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                taxCodeTxtActionPerformed(evt);
-            }
-        });
+        CusIDTxt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        CphoneTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CphoneTxtActionPerformed(evt);
-            }
-        });
+        taxCodeTxt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
+        companyNameTxt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
+        contactPersonTxt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
+        CphoneTxt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
+        CemailTxt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         CemailTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CemailTxtActionPerformed(evt);
             }
         });
+
+        CaddressTxt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         SaveBtn.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         SaveBtn.setText("Lưu");
@@ -465,7 +466,7 @@ public class CustomerFrame extends javax.swing.JFrame {
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(34, 34, 34)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(CusIDTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 708, Short.MAX_VALUE)
+                    .addComponent(CusIDTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 710, Short.MAX_VALUE)
                     .addComponent(companyNameTxt)
                     .addComponent(taxCodeTxt, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(contactPersonTxt, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -478,7 +479,7 @@ public class CustomerFrame extends javax.swing.JFrame {
                         .addComponent(SaveBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(SearchBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(DelBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(145, 145, 145))
+                .addGap(149, 149, 149))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jScrollPane2)
@@ -534,10 +535,9 @@ public class CustomerFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
-                .addContainerGap())
+                .addComponent(jTabbedPane1))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -689,15 +689,6 @@ public class CustomerFrame extends javax.swing.JFrame {
         CemailTxt.setText("");
         CaddressTxt.setText("");
     }//GEN-LAST:event_DelBtnActionPerformed
-
-    private void taxCodeTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taxCodeTxtActionPerformed
-
-        
-    }//GEN-LAST:event_taxCodeTxtActionPerformed
-
-    private void CphoneTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CphoneTxtActionPerformed
-
-    }//GEN-LAST:event_CphoneTxtActionPerformed
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

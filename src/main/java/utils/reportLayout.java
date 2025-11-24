@@ -87,7 +87,7 @@ public class reportLayout {
                 document.add(title);
                 Paragraph reportIDPara = new Paragraph("Mã báo cáo: " + reportID, fontSubTitle);
                 reportIDPara.setAlignment(Element.ALIGN_CENTER);
-                reportIDPara.setSpacingAfter(15f);
+//                reportIDPara.setSpacingAfter(15f);
                 document.add(reportIDPara);
                 // ======= 3. DATE RANGE SECTION =======
                 PdfPTable dateTable = new PdfPTable(2);
@@ -101,6 +101,11 @@ public class reportLayout {
                 dateTable.addCell(startDateCell);
                 dateTable.addCell(endDateCell);
                 document.add(dateTable);
+//  add total amount order
+                Paragraph orderPara = new Paragraph("Tổng số đơn hàng đã thanh toán: " + details.size(), fontSubTitle);
+                orderPara.setAlignment(Element.ALIGN_CENTER);
+                orderPara.setSpacingAfter(10f);
+                document.add(orderPara);
 // ======= 4. DATA TABLE SECTION =======
                 PdfPTable table = new PdfPTable(5);
                 float[] columnWidths = {1f, 3.5f, 1.5f, 1.5f, 2f};
@@ -122,15 +127,14 @@ public class reportLayout {
                 int total = 0;
                 for (int i = 0; i < details.size(); i++) {
                     Object[] item = details.get(i);
-                    if (item == null || item.length < 3) {
+                    if (item == null || item.length < 4) {
                         System.err.println("Lỗi dữ liệu: Hàng " + (i + 1) + " thiếu thông tin.");
                         continue; // Bỏ qua hàng dữ liệu lỗi
                     }
 
                     try {
-                        int quantity = Integer.parseInt(item[1].toString());
-                        int totalPrice = Integer.parseInt(item[2].toString());
-                        int unitPrice = (quantity > 0) ? (totalPrice / quantity) : 0;
+                        int unitPrice = Integer.parseInt(item[2].toString());
+                        int totalPrice = Integer.parseInt(item[3].toString());
 
                         table.addCell(createStyledCell(String.valueOf(i + 1), fontNormal, Element.ALIGN_CENTER, Rectangle.BOX));
 

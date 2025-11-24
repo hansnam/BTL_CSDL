@@ -137,8 +137,10 @@ public class ReportModify {
 
         String sql = """
             SELECT 
+                p.ProductID as productID,
                 p.ProductName AS ProductName,
                 SUM(od.Quantity) AS amountSell,
+                p.Price as unitPrice,
                 SUM(od.SubTotal) AS moneySell
             FROM (  
                     SELECT * FROM Orders 
@@ -149,7 +151,7 @@ public class ReportModify {
             JOIN
                 Products p ON od.ProductID = p.ProductID
             GROUP BY 
-                p.ProductName
+                p.ProductID, p.ProductName, p.Price
             ORDER BY
                 moneySell
         """;
@@ -160,10 +162,11 @@ public class ReportModify {
             ps.setString(2, endDate.toString());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Object[] row = new Object[3];
+                Object[] row = new Object[4];
                 row[0] = rs.getString("ProductName");
                 row[1] = rs.getInt("amountSell");
-                row[2] = rs.getInt("moneySell");
+                row[2] = rs.getInt("unitPrice");
+                row[3] = rs.getInt("moneySell");
                 dataList.add(row);
             }
         } catch (SQLException ex) {
