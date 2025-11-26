@@ -508,13 +508,13 @@ public class MainFrame extends javax.swing.JFrame {
                         "Trùng mã", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            int totalAmount = (int) calculateTotalAmount();
+            int totalAmount = calculateTotalAmount();
             LocalDateTime now = LocalDateTime.now();
             Timestamp orderDate = Timestamp.valueOf(now);
             String status = "Đã hoàn thành";
 
-            boolean orderSaved = OrderModify.insertOrder(orderId, customerId, (int) totalAmount,
-                    orderDate, status, managerId, quantityType);
+            boolean orderSaved = OrderModify.insertOrder(orderId, customerId,
+                    orderDate, status, managerId, staffId);
 
             if (!orderSaved) {
                 JOptionPane.showMessageDialog(this, "Lỗi CSDL: Không thể lưu đơn hàng chính! \n(Kiểm tra Log CSDL)",

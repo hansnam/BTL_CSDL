@@ -172,8 +172,8 @@ public class OrderModify {
         return orderList;
     }
 
-    public static boolean insertOrder(String orderId, String customerId, int totalAmount, java.sql.Timestamp orderDate, String status, String ManagerID, int QuantityType) {
-        String sql = "INSERT INTO orders (OrderID, CustomerID,OrderDate, OrderStatus, ManagerID) VALUES (?, ?, ?, ?, ?)";
+    public static boolean insertOrder(String orderId, String customerId, java.sql.Timestamp orderDate, String status, String ManagerID, String StaffID) {
+        String sql = "INSERT INTO orders (OrderID, CustomerID,OrderDate, OrderStatus, ManagerID, StaffID) VALUES (?, ?, ?, ?, ?, ?)";
 
         //boolean orderSaved = OrderModify.insertOrder(orderId, customerId, totalAmount, orderDate, status, managerId);
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -183,7 +183,8 @@ public class OrderModify {
             // ps.setInt(3, totalAmount);
             ps.setTimestamp(3, orderDate);
             ps.setString(4, status);
-            ps.setString(5, ManagerID);
+            ps.setString(5, ManagerID);            
+            ps.setString(6, StaffID);            
             //ps.setInt(6, QuantityType);
 
             return ps.executeUpdate() > 0;
