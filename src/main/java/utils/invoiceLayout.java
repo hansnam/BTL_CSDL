@@ -3,6 +3,7 @@ package utils;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
 import com.lowagie.text.pdf.draw.LineSeparator;
+import com.lowagie.text.pdf.draw.VerticalPositionMark;
 import java.io.FileOutputStream;
 import java.nio.file.*;
 import java.time.LocalDateTime;
@@ -94,7 +95,7 @@ public class invoiceLayout {
             //infoTable.setWidths(new float[]{2.5f, 5f});
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
-            
+
             DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
             DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
             String formattedOrderDate;
@@ -164,27 +165,14 @@ public class invoiceLayout {
             document.add(table);
             document.add(new Paragraph("\n\n"));
 
-            // ======= 5. CHỮ KÝ =======
-            PdfPTable signTable = new PdfPTable(2);
-            signTable.setWidthPercentage(100);
-            signTable.setWidths(new float[]{1, 1});
-
-            PdfPCell buyer = new PdfPCell(new Phrase("Người mua hàng\n(Ký và ghi rõ họ tên)", fontNormal));
-            buyer.setHorizontalAlignment(Element.ALIGN_CENTER);
-            buyer.setBorder(Rectangle.NO_BORDER);
-
-            PdfPCell seller = new PdfPCell(new Phrase("Người bán hàng\n(Ký và ghi rõ họ tên)", fontNormal));
-            seller.setHorizontalAlignment(Element.ALIGN_CENTER);
-            seller.setBorder(Rectangle.NO_BORDER);
-
-            signTable.addCell(buyer);
-            signTable.addCell(seller);
-            document.add(signTable);
-
             // ======= 6. LỜI CẢM ƠN =======
-            document.add(new Paragraph("\n\n\n\n\n\n"));
-            Paragraph thank = new Paragraph("Xin cảm ơn quý khách!", new Font(Font.HELVETICA, 18, Font.ITALIC, Color.BLACK));
+            Paragraph thank = new Paragraph("Xin cảm ơn quý khách!",
+            new Font(Font.HELVETICA, 18, Font.ITALIC, Color.BLACK));
+
             thank.setAlignment(Element.ALIGN_CENTER);
+
+            document.add(Chunk.NEWLINE);
+            document.add(new Chunk(new VerticalPositionMark()));
             document.add(thank);
 
             // ======= KẾT THÚC =======

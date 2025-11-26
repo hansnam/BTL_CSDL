@@ -1,4 +1,3 @@
-
 package ui;
 
 import dao.OrderModify;
@@ -18,7 +17,6 @@ import utils.CustomizeHeaderTable;
 public class MainFrame extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
-    
 
     DefaultTableModel productModel;
     DefaultTableModel cartModel;
@@ -27,9 +25,9 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
         setLocationRelativeTo(null);
-        CustomizeHeaderTable.customizeTableHeader(cartTable);        
+        CustomizeHeaderTable.customizeTableHeader(cartTable);
         CustomizeHeaderTable.customizeTableHeader(productTable);
-        
+
         loadProducts();
     }
 
@@ -48,7 +46,7 @@ public class MainFrame extends javax.swing.JFrame {
                 p.getDescriptions()
             });
         }
-        
+
         productTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -83,7 +81,7 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         });
-        
+
         cartTable.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
@@ -105,7 +103,7 @@ public class MainFrame extends javax.swing.JFrame {
                     }
                     if (row >= 0 && column == 2) {
                         try {
-                            int newQuantity = Integer.parseInt(cartModel.getValueAt(row, 2).toString());                
+                            int newQuantity = Integer.parseInt(cartModel.getValueAt(row, 2).toString());
                             if (newQuantity <= 0) {
                                 JOptionPane.showMessageDialog(null, "Số lượng sản phẩm phải là số dương.");
                                 cartModel.setValueAt(1, row, 2);
@@ -147,7 +145,7 @@ public class MainFrame extends javax.swing.JFrame {
             cartModel.addRow(new Object[]{stt, productName, 1, price});
         }
     }
-    
+
     private int calculateTotalAmount() {
         int total = 0;
         for (int i = 0; i < cartModel.getRowCount(); i++) {
@@ -160,8 +158,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
         return total;
     }
-    
-    
+
     private void showData(String keyword) {
         DefaultTableModel model = (DefaultTableModel) productTable.getModel();
         model.setRowCount(0); // Xóa dữ liệu cũ trong bảng
@@ -178,7 +175,6 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
 
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -454,7 +450,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        
+
         int quantityType = cartModel.getRowCount();
 
         if (quantityType == 0) {
@@ -483,18 +479,16 @@ public class MainFrame extends javax.swing.JFrame {
                     "Huỷ bỏ", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         String managerId = JOptionPane.showInputDialog(this,
-                "Vui lòng nhập Mã quản lý: ",
-                "Xác nhận đơn hàng (2/2)",
+                "Vui lòng nhập Mã quản lý (có thể bỏ trống): ",
+                "Xác nhận đơn hàng",
                 JOptionPane.PLAIN_MESSAGE);
 
+// Nếu bỏ trống -> lưu NULL
         if (managerId == null || managerId.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Mã quản lý là bắt buộc! Đã huỷ đơn hàng.",
-                    "Huỷ bỏ", JOptionPane.WARNING_MESSAGE);
-            return;
+            managerId = null;
         }
-        
 
         try {
             String orderId = JOptionPane.showInputDialog(this,
@@ -529,7 +523,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
 
             boolean allDetailsSaved = true;
-            for (int i = 0; i < quantityType; i++) { 
+            for (int i = 0; i < quantityType; i++) {
                 String productName = cartModel.getValueAt(i, 1).toString();
                 int quantity = Integer.parseInt(cartModel.getValueAt(i, 2).toString());
                 String productId = ProductModify.getProductIdByName(productName);
@@ -547,7 +541,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
 
             if (allDetailsSaved) {
-                JOptionPane.showMessageDialog(this, "Đã lưu đơn hàng " + orderId + " (NV: " + managerId + ") vào CSDL thành công!");
+                JOptionPane.showMessageDialog(this, "Đã lưu đơn hàng " + orderId + " (vào CSDL thành công!");
             } else {
                 JOptionPane.showMessageDialog(this, "Đơn hàng " + orderId + " đã được lưu,"
                         + "NHƯNG một số chi tiết sản phẩm có thể đã bị lỗi.",
@@ -575,7 +569,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         new OrderFrame().setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
-                       
+
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         new CustomerFrame().setVisible(true);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
