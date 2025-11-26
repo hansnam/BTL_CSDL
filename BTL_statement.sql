@@ -1,42 +1,31 @@
--- select * from orders;
--- select * from reports;
--- select * from customers;
--- select * from individualcus;
--- select * from corporatecus;
--- select * from managers;
--- select * from staffs;
--- select * from employees;
--- select * from orderdetail;
--- select * from products;
-
 DROP DATABASE IF EXISTS sale_management;
 
 CREATE DATABASE sale_management
-DEFAULT CHARACTER SET utf8mb4 		-- utf8mb4 = Bảng mã Unicode đầy đủ (hỗ trợ tiếng Việt, emoji, tất cả ngôn ngữ)
-DEFAULT COLLATE utf8mb4_unicode_ci; -- Quy tắc để sắp xếp và so sánh các ký tự không phân biệt hoa thường {A, B, C, ..., Á, À, Ả, ..., 😊, ✅, ...}
+DEFAULT CHARACTER SET utf8mb4
+DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE sale_management;
 
 CREATE TABLE Employees (
-	EmployeeID 		CHAR(5)  PRIMARY KEY,
-    EName 			VARCHAR(30)  NOT NULL,
+	EmployeeID 		CHAR(5) PRIMARY KEY,
+    EName 			VARCHAR(30) NOT NULL,
     Gender			VARCHAR(5),
-    Phone 			CHAR(10)  UNIQUE  NOT NULL,
-    Email			VARCHAR(50)  UNIQUE  NOT NULL,
-    Salary			INT  NOT NULL
+    Phone 			CHAR(10) UNIQUE NOT NULL,
+    Email			VARCHAR(50) UNIQUE NOT NULL,
+    Salary			INT NOT NULL
 );
 
 CREATE TABLE Managers (
-	ManagerID		CHAR(5)  PRIMARY KEY,
-    Title			VARCHAR(30)  UNIQUE  NOT NULL,
+	ManagerID		CHAR(5) PRIMARY KEY,
+    Title			VARCHAR(30) UNIQUE NOT NULL,
     FOREIGN KEY (ManagerID) REFERENCES Employees(EmployeeID) 
 		ON UPDATE CASCADE
         ON DELETE CASCADE
 );
     
 CREATE TABLE Staffs (
-	StaffID			CHAR(5)  PRIMARY KEY,
-    HireDate 		DATE  NOT NULL,
+	StaffID			CHAR(5) PRIMARY KEY,
+    HireDate 		DATE NOT NULL,
     ManagerID		CHAR(5)	 NOT NULL,
     FOREIGN KEY (StaffID) REFERENCES Employees(EmployeeID) 
 		ON UPDATE CASCADE
@@ -46,15 +35,15 @@ CREATE TABLE Staffs (
 );
 
 CREATE TABLE Customers (
-	CustomerID		CHAR(8)  PRIMARY KEY,
-    Phone 			CHAR(10)  UNIQUE  NOT NULL,
-    Email			VARCHAR(50)  UNIQUE,
-    Address			VARCHAR(255)  NOT NULL
+	CustomerID		CHAR(8) PRIMARY KEY,
+    Phone 			CHAR(10) UNIQUE NOT NULL,
+    Email			VARCHAR(50) UNIQUE,
+    Address			VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IndividualCus (
-	IndividualID	CHAR(8)  PRIMARY KEY,
-    ICName 			VARCHAR(30)  NOT NULL,
+	IndividualID	CHAR(8) PRIMARY KEY,
+    ICName 			VARCHAR(30) NOT NULL,
     Gender			VARCHAR(5),
     FOREIGN KEY (IndividualID) REFERENCES Customers(CustomerID) 
 		ON UPDATE CASCADE
@@ -62,30 +51,28 @@ CREATE TABLE IndividualCus (
 );
 
 CREATE TABLE CorporateCus (
-	CorporateID		CHAR(8)  PRIMARY KEY,
-    CompanyName		VARCHAR(100)  UNIQUE  NOT NULL,
-    TaxCode 		VARCHAR(15)  UNIQUE  NOT NULL,
-    ContactPerson  	VARCHAR(30)  NOT NULL,
+	CorporateID		CHAR(8) PRIMARY KEY,
+    CompanyName		VARCHAR(100) UNIQUE NOT NULL,
+    TaxCode 		VARCHAR(15) UNIQUE NOT NULL,
+    ContactPerson 	VARCHAR(30) NOT NULL,
     FOREIGN KEY (CorporateID) REFERENCES Customers(CustomerID)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE
 );
 
 CREATE TABLE Products (
-	ProductID		CHAR(8)  PRIMARY KEY,
-    ProductName		VARCHAR(30)	 UNIQUE  NOT NULL,
-    Descriptions	VARCHAR(255)  NOT NULL,
-    Price 			INT  NOT NULL
+	ProductID		CHAR(8) PRIMARY KEY,
+    ProductName		VARCHAR(30)	 UNIQUE NOT NULL,
+    Descriptions	VARCHAR(255) NOT NULL,
+    Price 			INT NOT NULL
 );
 
 CREATE TABLE Orders (
-	OrderID			CHAR(8)  PRIMARY KEY,
-    ManagerID		CHAR(5)  NOT NULL,
-    CustomerID		CHAR(8)  NOT NULL,
-    QuantityType   	INT NOT NULL  CHECK(QuantityType > 0),
-    TotalAmount		INT  NOT NULL  CHECK(TotalAmount > 0),
-    OrderDate		DATETIME  NOT NULL,
-    OrderStatus		VARCHAR(30)  NOT NULL,
+	OrderID			CHAR(8) PRIMARY KEY,
+    ManagerID		CHAR(5) NULL,
+    CustomerID		CHAR(8) NOT NULL,
+    OrderDate		DATETIME NOT NULL,
+    OrderStatus		VARCHAR(30) NOT NULL,
     FOREIGN KEY (ManagerID) REFERENCES Managers(ManagerID)
 		ON UPDATE CASCADE,
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
@@ -94,10 +81,9 @@ CREATE TABLE Orders (
 );
 
 CREATE TABLE OrderDetail (
-	OrderID		CHAR(8)  NOT NULL,
-    ProductID  	CHAR(8)  NOT NULL,
-    Quantity   	INT  NOT NULL  CHECK(Quantity > 0),
-	SubTotal	INT  NOT NULL  CHECK(SubTotal > 0),
+	OrderID		CHAR(8) NOT NULL,
+    ProductID 	CHAR(8) NOT NULL,
+    Quantity 	INT NOT NULL CHECK(Quantity > 0),
 	PRIMARY KEY (OrderID, ProductID),
 	FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
 		ON UPDATE CASCADE
@@ -106,13 +92,21 @@ CREATE TABLE OrderDetail (
 		ON DELETE CASCADE
 );
 
+CREATE TABLE Payment (
+	 PaymentID		CHAR(10) PRIMARY KEY,
+     OrderID		CHAR(8) UNIQUE NOT NULL,
+     PaymentMethod	VARCHAR(30),
+     PaymentDate	DATETIME,
+     PaymentStatus	VARCHAR(30) NOT NULL,
+     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
+		ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
 CREATE TABLE Reports (
 	ReportID		CHAR(5)	 PRIMARY KEY,
 	ManagerID		CHAR(5)  NOT NULL,
     StaffID			CHAR(5)  NOT NULL,
-    OrderQuantity 	INT  NOT NULL,
-    Revenue			INT  NOT NULL,
-    Receivables		INT,
     StartDate		DATE  NOT NULL,
     EndDate			DATE  NOT NULL,
 	FOREIGN KEY (ManagerID) REFERENCES Managers(ManagerID)
@@ -121,30 +115,6 @@ CREATE TABLE Reports (
 		ON UPDATE CASCADE,
     CHECK (DATEDIFF(EndDate, StartDate) >= 7)
 );
-
-CREATE TABLE Payment (
- 	 PaymentID		CHAR(10)  PRIMARY KEY,
-     OrderID			CHAR(10)  UNIQUE  NOT NULL,
-     PaymentMethod	VARCHAR(30),
-     PaymentDate		DATETIME,
-     PaymentStatus	VARCHAR(30)  NOT NULL,
-     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
- 		ON UPDATE CASCADE
-        ON DELETE CASCADE
-);
-
-CREATE TABLE Processing (
- 	OrderID		CHAR(10)  NOT NULL,
-     StaffID		CHAR(5)  NOT NULL,
-     Task		VARCHAR(20)  NOT NULL,
-     ProcessDate DATE  NOT NULL,
-     PRIMARY KEY (OrderID, StaffID),
-     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
- 		ON UPDATE CASCADE
-         ON DELETE CASCADE,
- 	FOREIGN KEY (StaffID) REFERENCES Staffs(StaffID)
- 		ON UPDATE CASCADE
- );
 
 -- Bảng 1: Employees (15 người)
 INSERT INTO Employees VALUES
@@ -287,48 +257,46 @@ INSERT INTO Products VALUES
 ('P2025002', 'Thiệp chúc mừng năm mới', 'Thiệp chúc Tết thiết kế độc quyền', 65000),
 ('P2025003', 'Lịch để bàn 2025', 'Lịch để bàn 12 tháng, in 4 màu', 95000);
 
--- Bảng 8: Orders (40 đơn hàng) - TÍNH LẠI TOÀN BỘ
-INSERT INTO Orders VALUES
--- 2023
-('ORD23001', 'E2501', 'C2024013', 3, 850000, '2023-01-15 10:25:40', 'Đã hoàn thành'),
-('ORD23002', 'E2505', 'C2023001', 2, 180000, '2023-02-20 14:10:05', 'Đã hoàn thành'),
-('ORD23003', 'E2507', 'C2024014', 4, 2160000, '2023-03-10 17:55:12', 'Đã hoàn thành'),
-('ORD23004', 'E2512', 'C2024001', 1, 150000, '2023-04-05 08:05:33', 'Đang xử lý'),
-('ORD23005', 'E2501', 'C2024013', 2, 350000, '2023-05-18 11:30:59', 'Đã hoàn thành'),
-('ORD23006', 'E2505', 'C2025005', 3, 735000, '2023-06-22 15:45:00', 'Đã hoàn thành'),
-('ORD23007', 'E2507', 'C2023002', 1, 50000, '2023-07-30 13:20:18', 'Đã hoàn thành'),
-('ORD23008', 'E2512', 'C2024014', 5, 2300000, '2023-08-12 16:50:24', 'Đã hoàn thành'),
-('ORD23009', 'E2501', 'C2024002', 2, 240000, '2023-09-25 09:15:37', 'Đang xử lý'),
-('ORD23010', 'E2505', 'C2025006', 4, 1180000, '2023-10-08 12:40:46', 'Đã hoàn thành'),
-('ORD23011', 'E2507', 'C2024003', 1, 120000, '2023-11-15 17:05:03', 'Đã hoàn thành'),
-('ORD23012', 'E2512', 'C2024013', 3, 570000, '2023-12-20 10:58:19', 'Đã hoàn thành'),
--- 2024
-('ORD24001', 'E2501', 'C2025007', 2, 325000, '2024-01-10 14:35:28', 'Đã hoàn thành'),
-('ORD24002', 'E2505', 'C2024004', 1, 60000, '2024-02-14 11:22:45', 'Đang xử lý'),
-('ORD24003', 'E2507', 'C2024014', 4, 2040000, '2024-03-18 09:47:11', 'Đã hoàn thành'),
-('ORD24004', 'E2512', 'C2025008', 3, 520000, '2024-04-22 16:00:27', 'Đã hoàn thành'),
-('ORD24005', 'E2501', 'C2024005', 2, 230000, '2024-05-30 13:13:50', 'Đã hoàn thành'),
-('ORD24006', 'E2505', 'C2024013', 5, 1075000, '2024-06-05 17:40:17', 'Đã hoàn thành'),
-('ORD24007', 'E2507', 'C2025009', 2, 250000, '2024-07-12 08:50:39', 'Đang xử lý'),
-('ORD24008', 'E2512', 'C2024006', 1, 250000, '2024-08-25 10:18:04', 'Đã hoàn thành'),
-('ORD24009', 'E2501', 'C2024014', 4, 2630000, '2024-09-08 15:30:11', 'Đã hoàn thành'),
-('ORD24010', 'E2505', 'C2023003', 2, 150000, '2024-10-15 12:05:29', 'Đã hoàn thành'),
-('ORD24011', 'E2507', 'C2025010', 3, 570000, '2024-11-20 16:25:47', 'Đang xử lý'),
-('ORD24012', 'E2512', 'C2024007', 1, 80000, '2024-12-05 09:33:01', 'Đã hoàn thành'),
-('ORD24013', 'E2501', 'C2024013', 4, 790000, '2024-01-18 14:02:15', 'Đã hoàn thành'),
-('ORD24014', 'E2505', 'C2024008', 2, 290000, '2024-02-22 11:48:32', 'Đã hoàn thành'),
-('ORD24015', 'E2507', 'C2024014', 5, 3330000, '2024-03-30 17:08:58', 'Đã hoàn thành'),
-('ORD24016', 'E2512', 'C2025005', 3, 555000, '2024-04-12 08:37:19', 'Đang xử lý'),
-('ORD24017', 'E2501', 'C2024009', 1, 180000, '2024-05-25 13:55:36', 'Đã hoàn thành'),
-('ORD24018', 'E2505', 'C2024013', 2, 305000, '2024-06-08 15:11:03', 'Đã hoàn thành'),
-('ORD24019', 'E2507', 'C2023004', 1, 75000, '2024-07-15 10:42:20', 'Đã hoàn thành'),
-('ORD24020', 'E2512', 'C2024014', 4, 2630000, '2024-08-20 14:59:41', 'Đã hoàn thành'),
-('ORD24021', 'E2501', 'C2025006', 3, 540000, '2024-09-05 16:44:09', 'Đang xử lý'),
-('ORD24022', 'E2505', 'C2024010', 2, 200000, '2024-10-18 11:09:27', 'Đã hoàn thành'),
-('ORD24023', 'E2507', 'C2024013', 5, 1275000, '2024-11-22 09:28:44', 'Đã hoàn thành'),
-('ORD24024', 'E2512', 'C2023005', 1, 350000, '2024-12-30 12:38:55', 'Đã hoàn thành');
+-- Bảng 8: Orders (40 đơn hàng)
+INSERT INTO Orders (OrderID, ManagerID, CustomerID, OrderDate, OrderStatus) VALUES
+('ORD23001', 'E2501', 'C2024013', '2023-01-15 10:25:40', 'Đã hoàn thành'),
+('ORD23002', 'E2505', 'C2023001', '2023-02-20 14:10:05', 'Đã hoàn thành'),
+('ORD23003', 'E2507', 'C2024014', '2023-03-10 17:55:12', 'Đã hoàn thành'),
+('ORD23004', 'E2512', 'C2024001', '2023-04-05 08:05:33', 'Đang xử lý'),
+('ORD23005', 'E2501', 'C2024013', '2023-05-18 11:30:59', 'Đã hoàn thành'),
+('ORD23006', 'E2505', 'C2025005', '2023-06-22 15:45:00', 'Đã hoàn thành'),
+('ORD23007', 'E2507', 'C2023002', '2023-07-30 13:20:18', 'Đã hoàn thành'),
+('ORD23008', 'E2512', 'C2024014', '2023-08-12 16:50:24', 'Đã hoàn thành'),
+('ORD23009', 'E2501', 'C2024002', '2023-09-25 09:15:37', 'Đang xử lý'),
+('ORD23010', 'E2505', 'C2025006', '2023-10-08 12:40:46', 'Đã hoàn thành'),
+('ORD23011', 'E2507', 'C2024003', '2023-11-15 17:05:03', 'Đã hoàn thành'),
+('ORD23012', 'E2512', 'C2024013', '2023-12-20 10:58:19', 'Đã hoàn thành'),
+('ORD24001', 'E2501', 'C2025007', '2024-01-10 14:35:28', 'Đã hoàn thành'),
+('ORD24002', 'E2505', 'C2024004', '2024-02-14 11:22:45', 'Đang xử lý'),
+('ORD24003', 'E2507', 'C2024014', '2024-03-18 09:47:11', 'Đã hoàn thành'),
+('ORD24004', 'E2512', 'C2025008', '2024-04-22 16:00:27', 'Đã hoàn thành'),
+('ORD24005', 'E2501', 'C2024005', '2024-05-30 13:13:50', 'Đã hoàn thành'),
+('ORD24006', 'E2505', 'C2024013', '2024-06-05 17:40:17', 'Đã hoàn thành'),
+('ORD24007', 'E2507', 'C2025009', '2024-07-12 08:50:39', 'Đang xử lý'),
+('ORD24008', 'E2512', 'C2024006', '2024-08-25 10:18:04', 'Đã hoàn thành'),
+('ORD24009', 'E2501', 'C2024014', '2024-09-08 15:30:11', 'Đã hoàn thành'),
+('ORD24010', 'E2505', 'C2023003', '2024-10-15 12:05:29', 'Đã hoàn thành'),
+('ORD24011', 'E2507', 'C2025010', '2024-11-20 16:25:47', 'Đang xử lý'),
+('ORD24012', 'E2512', 'C2024007', '2024-12-05 09:33:01', 'Đã hoàn thành'),
+('ORD24013', 'E2501', 'C2024013', '2024-01-18 14:02:15', 'Đã hoàn thành'),
+('ORD24014', 'E2505', 'C2024008', '2024-02-22 11:48:32', 'Đã hoàn thành'),
+('ORD24015', 'E2507', 'C2024014', '2024-03-30 17:08:58', 'Đã hoàn thành'),
+('ORD24016', 'E2512', 'C2025005', '2024-04-12 08:37:19', 'Đang xử lý'),
+('ORD24017', 'E2501', 'C2024009', '2024-05-25 13:55:36', 'Đã hoàn thành'),
+('ORD24018', 'E2505', 'C2024013', '2024-06-08 15:11:03', 'Đã hoàn thành'),
+('ORD24019', 'E2507', 'C2023004', '2024-07-15 10:42:20', 'Đã hoàn thành'),
+('ORD24020', 'E2512', 'C2024014', '2024-08-20 14:59:41', 'Đã hoàn thành'),
+('ORD24021', 'E2501', 'C2025006', '2024-09-05 16:44:09', 'Đang xử lý'),
+('ORD24022', 'E2505', 'C2024010', '2024-10-18 11:09:27', 'Đã hoàn thành'),
+('ORD24023', 'E2507', 'C2024013', '2024-11-22 09:28:44', 'Đã hoàn thành'),
+('ORD24024', 'E2512', 'C2023005', '2024-12-30 12:38:55', 'Đã hoàn thành');
 
-INSERT INTO payment (PaymentID, OrderID, PaymentMethod, PaymentDate, PaymentStatus) VALUES
+INSERT INTO Payment (PaymentID, OrderID, PaymentMethod, PaymentDate, PaymentStatus) VALUES
 ('PAY23001', 'ORD23001', 'Chuyển khoản', '2023-01-15 11:25:40', 'Đã thanh toán'),
 ('PAY23002', 'ORD23002', 'Tiền mặt', '2023-02-20 15:10:05', 'Đã thanh toán'),
 ('PAY23003', 'ORD23003', 'Thẻ tín dụng', '2023-03-10 18:55:12', 'Đã thanh toán'),
@@ -366,200 +334,199 @@ INSERT INTO payment (PaymentID, OrderID, PaymentMethod, PaymentDate, PaymentStat
 ('PAY24023', 'ORD24023', 'Chuyển khoản', '2024-11-22 10:28:44', 'Đã thanh toán'),
 ('PAY24024', 'ORD24024', 'Thẻ tín dụng', '2024-12-30 13:38:55', 'Đã thanh toán');
 
-
--- Bảng 9: OrderDetail - GIỮ NGUYÊN (vì đã đúng)
+-- Bảng 9: OrderDetail
 INSERT INTO OrderDetail VALUES
 -- ORD23001
-('ORD23001', 'P2023001', 2, 300000),
-('ORD23001', 'P2023002', 3, 150000),
-('ORD23001', 'P2023005', 5, 400000),
+('ORD23001', 'P2023001', 2),
+('ORD23001', 'P2023002', 3),
+('ORD23001', 'P2023005', 5),
 -- ORD23002
-('ORD23002', 'P2023003', 1, 120000),
-('ORD23002', 'P2023015', 2, 60000),
+('ORD23002', 'P2023003', 1),
+('ORD23002', 'P2023015', 2),
 -- ORD23003
-('ORD23003', 'P2023004', 2, 900000),
-('ORD23003', 'P2023007', 1, 250000),
-('ORD23003', 'P2023013', 1, 650000),
-('ORD23003', 'P2023018', 3, 360000),
+('ORD23003', 'P2023004', 2),
+('ORD23003', 'P2023007', 1),
+('ORD23003', 'P2023013', 1),
+('ORD23003', 'P2023018', 3),
 -- ORD23004
-('ORD23004', 'P2023001', 1, 150000),
+('ORD23004', 'P2023001', 1),
 -- ORD23005
-('ORD23005', 'P2023006', 4, 240000),
-('ORD23005', 'P2023014', 2, 110000),
+('ORD23005', 'P2023006', 4),
+('ORD23005', 'P2023014', 2),
 -- ORD23006
-('ORD23006', 'P2023008', 2, 360000),
-('ORD23006', 'P2023010', 3, 225000),
-('ORD23006', 'P2023016', 1, 150000),
+('ORD23006', 'P2023008', 2),
+('ORD23006', 'P2023010', 3),
+('ORD23006', 'P2023016', 1),
 -- ORD23007
-('ORD23007', 'P2023002', 1, 50000),
+('ORD23007', 'P2023002', 1),
 -- ORD23008
-('ORD23008', 'P2023004', 3, 1350000),
-('ORD23008', 'P2023009', 2, 180000),
-('ORD23008', 'P2023011', 4, 140000),
-('ORD23008', 'P2023017', 1, 350000),
-('ORD23008', 'P2023019', 1, 280000),
+('ORD23008', 'P2023004', 3),
+('ORD23008', 'P2023009', 2),
+('ORD23008', 'P2023011', 4),
+('ORD23008', 'P2023017', 1),
+('ORD23008', 'P2023019', 1),
 -- ORD23009
-('ORD23009', 'P2023003', 1, 120000),
-('ORD23009', 'P2023012', 3, 120000),
+('ORD23009', 'P2023003', 1),
+('ORD23009', 'P2023012', 3),
 -- ORD23010
-('ORD23010', 'P2023005', 2, 160000),
-('ORD23010', 'P2023008', 1, 180000),
-('ORD23010', 'P2023013', 1, 650000),
-('ORD23010', 'P2023020', 2, 190000),
+('ORD23010', 'P2023005', 2),
+('ORD23010', 'P2023008', 1),
+('ORD23010', 'P2023013', 1),
+('ORD23010', 'P2023020', 2),
 -- ORD23011
-('ORD23011', 'P2023003', 1, 120000),
+('ORD23011', 'P2023003', 1),
 -- ORD23012
-('ORD23012', 'P2023001', 2, 300000),
-('ORD23012', 'P2023006', 3, 180000),
-('ORD23012', 'P2023015', 3, 90000),
+('ORD23012', 'P2023001', 2),
+('ORD23012', 'P2023006', 3),
+('ORD23012', 'P2023015', 3),
 -- ORD24001
-('ORD24001', 'P2023021', 5, 225000),
-('ORD24001', 'P2024002', 4, 100000),
+('ORD24001', 'P2023021', 5),
+('ORD24001', 'P2024002', 4),
 -- ORD24002
-('ORD24002', 'P2023006', 1, 60000),
+('ORD24002', 'P2023006', 1),
 -- ORD24003
-('ORD24003', 'P2023004', 2, 900000),
-('ORD24003', 'P2023013', 1, 650000),
-('ORD24003', 'P2024003', 1, 320000),
-('ORD24003', 'P2024006', 2, 170000),
+('ORD24003', 'P2023004', 2),
+('ORD24003', 'P2023013', 1),
+('ORD24003', 'P2024003', 1),
+('ORD24003', 'P2024006', 2),
 -- ORD24004
-('ORD24004', 'P2023007', 1, 250000),
-('ORD24004', 'P2023010', 2, 150000),
-('ORD24004', 'P2023018', 1, 120000),
+('ORD24004', 'P2023007', 1),
+('ORD24004', 'P2023010', 2),
+('ORD24004', 'P2023018', 1),
 -- ORD24005
-('ORD24005', 'P2023002', 3, 150000),
-('ORD24005', 'P2023012', 2, 80000),
+('ORD24005', 'P2023002', 3),
+('ORD24005', 'P2023012', 2),
 -- ORD24006
-('ORD24006', 'P2023001', 3, 450000),
-('ORD24006', 'P2023005', 2, 160000),
-('ORD24006', 'P2023009', 1, 90000),
-('ORD24006', 'P2023014', 3, 165000),
-('ORD24006', 'P2023016', 2, 300000),
+('ORD24006', 'P2023001', 3),
+('ORD24006', 'P2023005', 2),
+('ORD24006', 'P2023009', 1),
+('ORD24006', 'P2023014', 3),
+('ORD24006', 'P2023016', 2),
 -- ORD24007
-('ORD24007', 'P2023008', 1, 180000),
-('ORD24007', 'P2023011', 2, 70000),
+('ORD24007', 'P2023008', 1),
+('ORD24007', 'P2023011', 2),
 -- ORD24008
-('ORD24008', 'P2023007', 1, 250000),
+('ORD24008', 'P2023007', 1),
 -- ORD24009
-('ORD24009', 'P2023004', 3, 1350000),
-('ORD24009', 'P2023013', 1, 650000),
-('ORD24009', 'P2023017', 1, 350000),
-('ORD24009', 'P2023019', 1, 280000),
+('ORD24009', 'P2023004', 3),
+('ORD24009', 'P2023013', 1),
+('ORD24009', 'P2023017', 1),
+('ORD24009', 'P2023019', 1),
 -- ORD24010
-('ORD24010', 'P2023003', 1, 120000),
-('ORD24010', 'P2023015', 1, 30000),
+('ORD24010', 'P2023003', 1),
+('ORD24010', 'P2023015', 1),
 -- ORD24011
-('ORD24011', 'P2023005', 3, 240000),
-('ORD24011', 'P2023008', 1, 180000),
-('ORD24011', 'P2023010', 2, 150000),
+('ORD24011', 'P2023005', 3),
+('ORD24011', 'P2023008', 1),
+('ORD24011', 'P2023010', 2),
 -- ORD24012
-('ORD24012', 'P2023005', 1, 80000),
+('ORD24012', 'P2023005', 1),
 -- ORD24013
-('ORD24013', 'P2023001', 2, 300000),
-('ORD24013', 'P2023006', 3, 180000),
-('ORD24013', 'P2023012', 4, 160000),
-('ORD24013', 'P2023015', 5, 150000),
+('ORD24013', 'P2023001', 2),
+('ORD24013', 'P2023006', 3),
+('ORD24013', 'P2023012', 4),
+('ORD24013', 'P2023015', 5),
 -- ORD24014
-('ORD24014', 'P2023009', 2, 180000),
-('ORD24014', 'P2023014', 2, 110000),
+('ORD24014', 'P2023009', 2),
+('ORD24014', 'P2023014', 2),
 -- ORD24015
-('ORD24015', 'P2023004', 4, 1800000),
-('ORD24015', 'P2023007', 1, 250000),
-('ORD24015', 'P2023013', 1, 650000),
-('ORD24015', 'P2023017', 1, 350000),
-('ORD24015', 'P2023019', 1, 280000),
+('ORD24015', 'P2023004', 4),
+('ORD24015', 'P2023007', 1),
+('ORD24015', 'P2023013', 1),
+('ORD24015', 'P2023017', 1),
+('ORD24015', 'P2023019', 1),
 -- ORD24016
-('ORD24016', 'P2023008', 2, 360000),
-('ORD24016', 'P2023010', 1, 75000),
-('ORD24016', 'P2023018', 1, 120000),
+('ORD24016', 'P2023008', 2),
+('ORD24016', 'P2023010', 1),
+('ORD24016', 'P2023018', 1),
 -- ORD24017
-('ORD24017', 'P2023008', 1, 180000),
+('ORD24017', 'P2023008', 1),
 -- ORD24018
-('ORD24018', 'P2023002', 4, 200000),
-('ORD24018', 'P2023011', 3, 105000),
+('ORD24018', 'P2023002', 4),
+('ORD24018', 'P2023011', 3),
 -- ORD24019
-('ORD24019', 'P2023010', 1, 75000),
+('ORD24019', 'P2023010', 1),
 -- ORD24020
-('ORD24020', 'P2023004', 3, 1350000),
-('ORD24020', 'P2023013', 1, 650000),
-('ORD24020', 'P2023017', 1, 350000),
-('ORD24020', 'P2023019', 1, 280000),
+('ORD24020', 'P2023004', 3),
+('ORD24020', 'P2023013', 1),
+('ORD24020', 'P2023017', 1),
+('ORD24020', 'P2023019', 1),
 -- ORD24021
-('ORD24021', 'P2023005', 2, 160000),
-('ORD24021', 'P2023009', 3, 270000),
-('ORD24021', 'P2023014', 2, 110000),
+('ORD24021', 'P2023005', 2),
+('ORD24021', 'P2023009', 3),
+('ORD24021', 'P2023014', 2),
 -- ORD24022
-('ORD24022', 'P2023003', 1, 120000),
-('ORD24022', 'P2023012', 2, 80000),
+('ORD24022', 'P2023003', 1),
+('ORD24022', 'P2023012', 2),
 -- ORD24023
-('ORD24023', 'P2023001', 4, 600000),
-('ORD24023', 'P2023006', 3, 180000),
-('ORD24023', 'P2023009', 2, 180000),
-('ORD24023', 'P2023014', 3, 165000),
-('ORD24023', 'P2023016', 1, 150000),
+('ORD24023', 'P2023001', 4),
+('ORD24023', 'P2023006', 3),
+('ORD24023', 'P2023009', 2),
+('ORD24023', 'P2023014', 3),
+('ORD24023', 'P2023016', 1),
 -- ORD24024
-('ORD24024', 'P2023017', 1, 350000);
+('ORD24024', 'P2023017', 1);
 
--- Bảng 10: Reports - SỬA MÃ THÀNH R2501 TĂNG DẦN
-INSERT INTO Reports VALUES
+
+-- Bảng 10: Reports - SỬA MÃ THÀNH R2501 TĂNG DẦN (ĐÃ XÓA CÁC CỘT TÍNH TOÁN)
+INSERT INTO Reports (ReportID, ManagerID, StaffID, StartDate, EndDate) VALUES
 -- Báo cáo tháng 1/2023
-('R2501', 'E2501', 'E2502', 1, 850000, 0, '2023-01-01', '2023-01-31'),
+('R2501', 'E2501', 'E2502', '2023-01-01', '2023-01-31'),
 -- Báo cáo tháng 2/2023
-('R2502', 'E2505', 'E2503', 1, 180000, 0, '2023-02-01', '2023-02-28'),
+('R2502', 'E2505', 'E2503', '2023-02-01', '2023-02-28'),
 -- Báo cáo tháng 3/2023
-('R2503', 'E2507', 'E2504', 1, 2160000, 0, '2023-03-01', '2023-03-31'),
--- Báo cáo tháng 4/2023 - Có công nợ
-('R2504', 'E2512', 'E2506', 1, 0, 150000, '2023-04-01', '2023-04-30'),
+('R2503', 'E2507', 'E2504', '2023-03-01', '2023-03-31'),
+-- Báo cáo tháng 4/2023
+('R2504', 'E2512', 'E2506', '2023-04-01', '2023-04-30'),
 -- Báo cáo tháng 5/2023
-('R2505', 'E2501', 'E2502', 1, 350000, 0, '2023-05-01', '2023-05-31'),
+('R2505', 'E2501', 'E2502', '2023-05-01', '2023-05-31'),
 -- Báo cáo tháng 6/2023
-('R2506', 'E2505', 'E2503', 1, 735000, 0, '2023-06-01', '2023-06-30'),
+('R2506', 'E2505', 'E2503', '2023-06-01', '2023-06-30'),
 -- Báo cáo tháng 7/2023
-('R2507', 'E2507', 'E2504', 1, 50000, 0, '2023-07-01', '2023-07-31'),
+('R2507', 'E2507', 'E2504', '2023-07-01', '2023-07-31'),
 -- Báo cáo tháng 8/2023
-('R2508', 'E2512', 'E2506', 1, 2300000, 0, '2023-08-01', '2023-08-31'),
--- Báo cáo tháng 9/2023 - Có công nợ
-('R2509', 'E2501', 'E2502', 1, 0, 240000, '2023-09-01', '2023-09-30'),
+('R2508', 'E2512', 'E2506', '2023-08-01', '2023-08-31'),
+-- Báo cáo tháng 9/2023
+('R2509', 'E2501', 'E2502', '2023-09-01', '2023-09-30'),
 -- Báo cáo tháng 10/2023
-('R2510', 'E2505', 'E2503', 1, 1180000, 0, '2023-10-01', '2023-10-31'),
+('R2510', 'E2505', 'E2503', '2023-10-01', '2023-10-31'),
 -- Báo cáo tháng 11/2023
-('R2511', 'E2507', 'E2504', 1, 120000, 0, '2023-11-01', '2023-11-30'),
+('R2511', 'E2507', 'E2504', '2023-11-01', '2023-11-30'),
 -- Báo cáo tháng 12/2023
-('R2512', 'E2512', 'E2506', 1, 570000, 0, '2023-12-01', '2023-12-31'),
+('R2512', 'E2512', 'E2506', '2023-12-01', '2023-12-31'),
 
 -- Báo cáo tháng 1/2024
-('R2513', 'E2501', 'E2508', 2, 1115000, 0, '2024-01-01', '2024-01-31'),
--- Báo cáo tháng 2/2024 - Có công nợ
-('R2514', 'E2505', 'E2509', 2, 290000, 60000, '2024-02-01', '2024-02-29'),
+('R2513', 'E2501', 'E2508', '2024-01-01', '2024-01-31'),
+-- Báo cáo tháng 2/2024
+('R2514', 'E2505', 'E2509', '2024-02-01', '2024-02-29'),
 -- Báo cáo tháng 3/2024
-('R2515', 'E2507', 'E2510', 2, 5370000, 0, '2024-03-01', '2024-03-31'),
--- Báo cáo tháng 4/2024 - Có công nợ
-('R2516', 'E2512', 'E2511', 2, 520000, 555000, '2024-04-01', '2024-04-30'),
+('R2515', 'E2507', 'E2510', '2024-03-01', '2024-03-31'),
+-- Báo cáo tháng 4/2024
+('R2516', 'E2512', 'E2511', '2024-04-01', '2024-04-30'),
 -- Báo cáo tháng 5/2024
-('R2517', 'E2501', 'E2513', 2, 410000, 0, '2024-05-01', '2024-05-31'),
+('R2517', 'E2501', 'E2513', '2024-05-01', '2024-05-31'),
 -- Báo cáo tháng 6/2024
-('R2518', 'E2505', 'E2514', 2, 1380000, 0, '2024-06-01', '2024-06-30'),
--- Báo cáo tháng 7/2024 - Có công nợ
-('R2519', 'E2507', 'E2515', 2, 75000, 250000, '2024-07-01', '2024-07-31'),
+('R2518', 'E2505', 'E2514', '2024-06-01', '2024-06-30'),
+-- Báo cáo tháng 7/2024
+('R2519', 'E2507', 'E2515', '2024-07-01', '2024-07-31'),
 -- Báo cáo tháng 8/2024
-('R2520', 'E2512', 'E2506', 1, 2630000, 0, '2024-08-01', '2024-08-31'),
--- Báo cáo tháng 9/2024 - Có công nợ
-('R2521', 'E2501', 'E2502', 1, 0, 540000, '2024-09-01', '2024-09-30'),
+('R2520', 'E2512', 'E2506', '2024-08-01', '2024-08-31'),
+-- Báo cáo tháng 9/2024
+('R2521', 'E2501', 'E2502', '2024-09-01', '2024-09-30'),
 -- Báo cáo tháng 10/2024
-('R2522', 'E2505', 'E2503', 1, 200000, 0, '2024-10-01', '2024-10-31'),
--- Báo cáo tháng 11/2024 - Có công nợ
-('R2523', 'E2507', 'E2504', 1, 1275000, 570000, '2024-11-01', '2024-11-30'),
+('R2522', 'E2505', 'E2503', '2024-10-01', '2024-10-31'),
+-- Báo cáo tháng 11/2024
+('R2523', 'E2507', 'E2504', '2024-11-01', '2024-11-30'),
 -- Báo cáo tháng 12/2024
-('R2524', 'E2512', 'E2506', 1, 350000, 0, '2024-12-01', '2024-12-31'),
+('R2524', 'E2512', 'E2506', '2024-12-01', '2024-12-31'),
 
--- Báo cáo quý (Revenue = 0)
-('R2525', 'E2501', 'E2508', 0, 0, 0, '2023-02-01', '2023-02-28'),
-('R2526', 'E2505', 'E2509', 0, 0, 0, '2024-05-01', '2024-05-31'),
-('R2527', 'E2507', 'E2510', 0, 0, 0, '2024-10-01', '2024-10-31'),
+-- Báo cáo quý
+('R2525', 'E2501', 'E2508', '2023-02-01', '2023-02-28'),
+('R2526', 'E2505', 'E2509', '2024-05-01', '2024-05-31'),
+('R2527', 'E2507', 'E2510', '2024-10-01', '2024-10-31'),
+('R2528', 'E2512', 'E2511', '2023-01-01', '2023-03-31'),
+('R2529', 'E2501', 'E2502', '2023-04-01', '2023-06-30'),
+('R2530', 'E2505', 'E2503', '2023-07-01', '2023-09-30');
 
--- Báo cáo quý (Receivables = 0)
-('R2528', 'E2512', 'E2511', 3, 3020000, 0, '2023-01-01', '2023-03-31'),
-('R2529', 'E2501', 'E2502', 4, 3585000, 0, '2023-04-01', '2023-06-30'),
-('R2530', 'E2505', 'E2503', 4, 4050000, 0, '2023-07-01', '2023-09-30');
 
 
