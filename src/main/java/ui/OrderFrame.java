@@ -1,42 +1,41 @@
-
 package ui;
 
 import dao.CustomerModify;
 import javax.swing.table.DefaultTableModel;
 import dao.OrderModify;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import utils.CustomizeHeaderTable;
 import utils.invoiceLayout;
 
 public class OrderFrame extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(OrderFrame.class.getName());
-    
+
     DefaultTableModel tableModel;
 
     public OrderFrame() {
         initComponents();
         setLocationRelativeTo(null);
         CustomizeHeaderTable.customizeTableHeader(orderTable);
-        
+
         tableModel = (DefaultTableModel) orderTable.getModel();
         loadAllOrders();
-        
+
     }
-    
+
     private void loadAllOrders() {
-        
+
         tableModel.setRowCount(0);
 
         List<Object[]> orderList = OrderModify.getAllOrdersForTable();
 
         if (orderList.isEmpty()) {
             logger.warning("Không tìm thấy hóa đơn nào trong CSDL.");
-        }
-        else {
+        } else {
             for (Object[] row : orderList) {
-                
+
                 tableModel.addRow(row);
             }
         }
@@ -139,18 +138,18 @@ public class OrderFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void detailBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailBtnActionPerformed
-        
+
         int selectedRow = orderTable.getSelectedRow();
-        
+
         // Kiểm tra xem người dùng đã chọn hàng nào chưa
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, 
-                    "Vui lòng chọn một hoá đơn để xem chi tiết.", 
-                    "Chưa chọn hoá đơn", 
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một hoá đơn để xem chi tiết.",
+                    "Chưa chọn hoá đơn",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         // Lấy Mã đơn hàng (OrderID) từ cột 1 (vì cột 0 là STT)
         String orderId = tableModel.getValueAt(selectedRow, 1).toString();
         OrderDetailFrame detailFrame = new OrderDetailFrame(orderId);
@@ -178,9 +177,8 @@ public class OrderFrame extends javax.swing.JFrame {
             String orderDate = tableModel.getValueAt(selectedRow, 5).toString();
 
             //Lấy thông tin khách hàng (Name/CompanyName và Address)
-            
-            String customerName = CustomerModify.getCustomerNameById(customerId); 
-            String address = CustomerModify.getCustomerAddressById(customerId);      
+            String customerName = CustomerModify.getCustomerNameById(customerId);
+            String address = CustomerModify.getCustomerAddressById(customerId);
 
             //Lấy danh sách chi tiết hoá đơn từ cơ sở dữ liệu
             List<Object[]> details = OrderModify.getOrderDetailForTable(orderId);
@@ -192,7 +190,6 @@ public class OrderFrame extends javax.swing.JFrame {
                 return;
             }
 
-          
             invoiceLayout.exportPDF(orderId, customerId, customerName, address, orderDate, details);
 
         } catch (Exception e) {
@@ -205,31 +202,30 @@ public class OrderFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_issueBtnActionPerformed
 
     private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
-        // TODO add your handling code here:
-        // 1. Hiển thị hộp thoại nhập liệu và lấy giá trị nhập vào
+        // Hiển thị hộp thoại nhập liệu và lấy giá trị nhập vào
         String searchText = JOptionPane.showInputDialog(this,
-                "Vui lòng nhập mã đơn hàng cần tìm (hoặc * để hiển thị tất cả)", // Nội dung thông báo
+                "Vui lòng nhập mã khách hàng (hoặc * để hiển thị tất cả)", // Nội dung thông báo
                 "Tìm kiếm đơn hàng", // Tiêu đề hộp thoại
                 JOptionPane.QUESTION_MESSAGE);
 
-        // Kiểm tra nếu người dùng nhấn Cancel (hủy) hoặc đóng hộp thoại (searchText sẽ là null)
+        // Kiểm tra nếu người dùng nhấn Cancel hoặc đóng hộp thoại
         if (searchText == null) {
             return;
         }
 
-        // Loại bỏ khoảng trắng (trim) sau khi người dùng nhập
+        // Loại bỏ khoảng trắng
         searchText = searchText.trim();
 
-        // 2. Xử lý logic tìm kiếm
+        // Kiểm tra dữ liệu rỗng
         if (searchText.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                    "Mã đơn hàng không được để trống.",
+                    "Mã khách hàng không được để trống.",
                     "Thiếu thông tin",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Nếu nhập dấu * thì hiển thị lại toàn bộ danh sách
+        // Nếu nhập dấu * thì hiển thị toàn bộ danh sách
         if (searchText.equals("*")) {
             loadAllOrders();
             return;
@@ -238,12 +234,13 @@ public class OrderFrame extends javax.swing.JFrame {
         // Xóa dữ liệu cũ trong bảng
         tableModel.setRowCount(0);
 
-        // Gọi phương thức tìm kiếm trong OrderModify
-        List<Object[]> searchResult = OrderModify.findOrderById(searchText);
+        // Gọi phương thức tìm kiếm theo mã khách hàng
+        List<Object[]> searchResult = OrderModify.findOrderByCusId(searchText);
 
+        // Kiểm tra kết quả
         if (searchResult == null || searchResult.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                    "Không tìm thấy đơn hàng với mã: " + searchText,
+                    "Không tìm thấy đơn hàng với mã khách hàng: " + searchText,
                     "Kết quả tìm kiếm",
                     JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -253,7 +250,7 @@ public class OrderFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_searchBtnActionPerformed
 
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton detailBtn;
     private javax.swing.JButton issueBtn;
