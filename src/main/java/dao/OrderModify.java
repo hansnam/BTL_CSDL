@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import models.Order;
@@ -249,6 +250,28 @@ public class OrderModify {
         }
 
         return orderList;
+    }
+    
+    public static int getAmountOrder(LocalDate startDate, LocalDate endDate, String orderStatus) {
+        String sql = """
+                        select count(*) as amount from orders 
+                        where orderDate >= ? and orderDate <= ? and orderStatus = ?
+                    """;
+        int amount = 0;
+        try (Connection conn = DBConnection.getConnection(); 
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDate(1, java.sql.Date.valueOf(startDate));
+            ps.setDate(2, java.sql.Date.valueOf(endDate));
+            ps.setString(3, orderStatus);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                amount = rs.getInt("amount");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return amount;
     }
    
 }

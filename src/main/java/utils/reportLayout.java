@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 
 public class reportLayout {
 
-    public static void exportPDF(String reportID, String managerName, String staffName, LocalDate startDate, LocalDate endDate, List<Object[]> details) {
+    public static void exportPDF(String reportID, String managerName, String staffName, int orderAmount, LocalDate startDate, LocalDate endDate, List<Object[]> details) {
         String dirPath = "save_file/Báo cáo";
         String filePath = dirPath + "/BaoCao_" + reportID + ".pdf";
 
@@ -102,7 +102,7 @@ public class reportLayout {
                 dateTable.addCell(endDateCell);
                 document.add(dateTable);
 //  add total amount order
-                Paragraph orderPara = new Paragraph("Tổng số đơn hàng đã thanh toán: " + details.size(), fontSubTitle);
+                Paragraph orderPara = new Paragraph("Tổng số đơn hàng đã thanh toán: " + orderAmount, fontSubTitle);
                 orderPara.setAlignment(Element.ALIGN_CENTER);
                 orderPara.setSpacingAfter(10f);
                 document.add(orderPara);

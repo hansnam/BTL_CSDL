@@ -12,8 +12,8 @@ public class ReportModify {
     
     public static void insert (Report report) {
         String sql = "INSERT INTO reports "
-                + "(ReportID, ManagerID, StaffID, OrderQuantity, Revenue, Receivables, StartDate, EndDate) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                + "(ReportID, ManagerID, StaffID, StartDate, EndDate) "
+                + "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection()) {
             
@@ -21,11 +21,8 @@ public class ReportModify {
             ps.setString(1, report.getReportID());
             ps.setString(2, report.getManagerID());
             ps.setString(3, report.getStaffID());
-            ps.setInt(4, report.getOrderQuantity());
-            ps.setInt(5, report.getRevenue());
-            ps.setInt(6, report.getReceivables());
-            ps.setDate(7, Date.valueOf(report.getStartDate()));
-            ps.setDate(8, Date.valueOf(report.getEndDate()));
+            ps.setDate(4, Date.valueOf(report.getStartDate()));
+            ps.setDate(5, Date.valueOf(report.getEndDate()));
             
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -44,10 +41,103 @@ public class ReportModify {
             ex.printStackTrace();
         }
     }
- 
+   
+    public static Report getReportByReportID(String reportID) {
+        String sql = """
+                    SELECT 
+                        r.ReportID,
+                        r.ManagerID,
+                        r.StaffID,
+                        r.StartDate,
+                        r.EndDate,
+
+                        COUNT(DISTINCT o.OrderID) AS OrderQuantity,
+
+                        IFNULL(SUM(CASE 
+                            WHEN o.OrderStatus = 'Đã hoàn thành' 
+                            THEN od.Quantity * p.Price 
+                            ELSE 0 
+                        END), 0) AS Revenue,
+                     
+                        IFNULL(SUM(CASE 
+                            WHEN o.OrderStatus = 'Đang xử lý' 
+                            THEN od.Quantity * p.Price 
+                            ELSE 0 
+                        END), 0) AS Receivables
+                    FROM 
+                        Reports AS r
+                    JOIN 
+                        Orders AS o ON r.StaffID = o.StaffID AND o.OrderDate BETWEEN r.StartDate AND r.EndDate
+                    JOIN 
+                        OrderDetail AS od ON o.OrderID = od.OrderID
+                    JOIN 
+                        Products AS p ON od.ProductID = p.ProductID
+                    WHERE
+                        r.ReportID = ?
+                    GROUP BY 
+                        r.ReportID, r.ManagerID, r.StaffID, r.StartDate, r.EndDate
+                     
+                    """;
+        Report report = null;
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, reportID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                report = new Report(
+                        rs.getString("ReportID"),
+                        rs.getString("ManagerID"),
+                        rs.getString("StaffID"),
+                        rs.getInt("OrderQuantity"),
+                        rs.getInt("Revenue"),
+                        rs.getInt("Receivables"),
+                        rs.getDate("startDate").toLocalDate(),
+                        rs.getDate("endDate").toLocalDate()
+                );
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return report;
+    }
+    
     public static List<Report> getReportList() {
         List<Report> dataList = new ArrayList<>();
-        String sql = "SELECT * FROM Reports";
+        String sql = """
+                    SELECT 
+                        r.ReportID,
+                        r.ManagerID,
+                        r.StaffID,
+                        r.StartDate,
+                        r.EndDate,
+
+                        COUNT(DISTINCT o.OrderID) AS OrderQuantity,
+
+                        IFNULL(SUM(CASE 
+                            WHEN o.OrderStatus = 'Đã hoàn thành' 
+                            THEN od.Quantity * p.Price 
+                            ELSE 0 
+                        END), 0) AS Revenue,
+                     
+                        IFNULL(SUM(CASE 
+                            WHEN o.OrderStatus = 'Đang xử lý' 
+                            THEN od.Quantity * p.Price 
+                            ELSE 0 
+                        END), 0) AS Receivables
+                    FROM 
+                        Reports AS r
+                    JOIN 
+                        Orders AS o ON o.OrderDate BETWEEN r.StartDate AND r.EndDate
+                    JOIN 
+                        OrderDetail AS od ON o.OrderID = od.OrderID
+                    JOIN 
+                        Products AS p ON od.ProductID = p.ProductID
+                    GROUP BY 
+                        r.ReportID, r.ManagerID, r.StaffID, r.StartDate, r.EndDate
+                     
+                    """;
 
         try (Connection conn = DBConnection.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -81,39 +171,7 @@ public class ReportModify {
         System.out.println(lastID);
         return String.format("R%d", lastID + 1);
     }
-    
-    public static Report createReport (LocalDate startDate, LocalDate endDate, String reportID, String managerID, String staffID) {
-        Report newReport = null;
-        String sql = """
-                SELECT OrderStatus, COUNT(*) as soluong, SUM(TotalAmount) as tong 
-                FROM Orders WHERE OrderDate >= ? AND OrderDate <= ?
-                GROUP BY OrderStatus
-                ORDER BY OrderStatus
-            """;
-        try (Connection conn = DBConnection.getConnection()) {
-            
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setDate(1, java.sql.Date.valueOf(startDate));
-            ps.setDate(2, java.sql.Date.valueOf(endDate));
-            ResultSet rs = ps.executeQuery();
-            int soluong = 0;
-            int loinhuan = 0;
-            int congno = 0;
-            if(rs.next()) {
-                soluong += rs.getInt("soluong");
-                loinhuan = rs.getInt("tong");
-            }
-            if(rs.next()) {
-                soluong += rs.getInt("soluong");
-                congno = rs.getInt("tong");
-            }
-            newReport = new Report( reportID, managerID, staffID, soluong, loinhuan, congno, startDate, endDate);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return newReport;
-    }
-    
+        
     public static List<String> getReportIDList() {
         List<String> dataList = new ArrayList<>();
 
@@ -141,7 +199,7 @@ public class ReportModify {
                 p.ProductName AS ProductName,
                 SUM(od.Quantity) AS amountSell,
                 p.Price as unitPrice,
-                SUM(od.SubTotal) AS moneySell
+                SUM(od.Quantity * p.Price) AS moneySell
             FROM (  
                     SELECT * FROM Orders 
                     WHERE OrderDate >= ? AND OrderDate <= ? AND OrderStatus = 'Đã hoàn thành'     

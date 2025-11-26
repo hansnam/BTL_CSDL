@@ -2,6 +2,7 @@
 package ui;
 
 import dao.ManagerModify;
+import dao.OrderModify;
 import dao.ReportModify;
 import dao.StaffModify;
 import java.awt.HeadlessException;
@@ -458,6 +459,7 @@ public class ReportFrame extends javax.swing.JFrame {
             String staffID = tableModel.getValueAt(selectedRow, 3).toString();
             LocalDate startDate = LocalDate.parse(tableModel.getValueAt(selectedRow, 7).toString());
             LocalDate endDate = LocalDate.parse(tableModel.getValueAt(selectedRow, 8).toString());
+            int orderAmount = OrderModify.getAmountOrder(startDate, endDate, "Đã hoàn thành");
 
             String managerName = ManagerModify.getManagerByID(managerID).getName();            
             String staffName = StaffModify.getStaffByID(staffID).getName();            
@@ -468,7 +470,7 @@ public class ReportFrame extends javax.swing.JFrame {
                 return;
             }
           
-            reportLayout.exportPDF(reportID, managerName, staffName, startDate, endDate, details);
+            reportLayout.exportPDF(reportID, managerName, staffName, orderAmount, startDate, endDate, details);
 
         } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(this,
@@ -519,22 +521,29 @@ public class ReportFrame extends javax.swing.JFrame {
         String managerID = listMID.getSelectedItem().toString();
         String staffID = listSID.getSelectedItem().toString();
       
-        Report newReport = ReportModify.createReport(date1, date2, reportIDtxt.getText(), managerID, staffID);
+        Report newReport = new Report(reportIDtxt.getText(), managerID, staffID, date1, date2);
         if (newReport == null) {
             JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tạo báo cáo mới.");
             return;
         }
-        // Tính số ngày giữa hai date
-        long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(date1, date2);
-
-        // Kiểm tra constraint: EndDate phải >= StartDate + 7 ngày
-        if (daysBetween < 7) {
+        try {
+            ReportModify.insert(newReport);
+            JOptionPane.showMessageDialog(this, "Bạn đã tạo báo cáo mới thành công.");
+            showData();
+        } catch (HeadlessException ex) {
             JOptionPane.showMessageDialog(this, "Khoảng cách giữa ngày kết thúc và ngày bắt đầu phải lớn hơn hoặc bằng 7 ngày!");
-            return; // Dừng lại không tạo report
         }
-        ReportModify.insert(newReport);
-        JOptionPane.showMessageDialog(this, "Bạn đã tạo báo cáo mới thành công.");
-        showData();
+//        // Tính số ngày giữa hai date
+//        long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(date1, date2);
+//
+//        // Kiểm tra constraint: EndDate phải >= StartDate + 7 ngày
+//        if (daysBetween < 7) {
+//            JOptionPane.showMessageDialog(this, "Khoảng cách giữa ngày kết thúc và ngày bắt đầu phải lớn hơn hoặc bằng 7 ngày!");
+//            return; // Dừng lại không tạo report
+//        }
+//        ReportModify.insert(newReport);
+//        JOptionPane.showMessageDialog(this, "Bạn đã tạo báo cáo mới thành công.");
+//        showData();
     }//GEN-LAST:event_createReportActionPerformed
 
     

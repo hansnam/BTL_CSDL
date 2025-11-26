@@ -22,6 +22,14 @@ public class Report {
         this.endDate = endDate;
     }
     
+    public Report(String reportID, String managerID, String staffID, LocalDate startDate, LocalDate endDate) {
+        this.reportID = reportID;
+        this.managerID = managerID;
+        this.staffID = staffID;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+    
     public String getReportID() {
         return reportID;
     }
