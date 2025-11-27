@@ -10,7 +10,7 @@ import models.Report;
 
 public class ReportModify {
     
-    public static void insert (Report report) {
+    public static void insert (Report report) throws SQLException {
         String sql = "INSERT INTO reports "
                 + "(ReportID, ManagerID, StaffID, StartDate, EndDate) "
                 + "VALUES (?, ?, ?, ?, ?)";
@@ -26,7 +26,7 @@ public class ReportModify {
             
             ps.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            throw ex;
         }
     }
     

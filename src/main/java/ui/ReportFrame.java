@@ -8,6 +8,7 @@ import dao.StaffModify;
 import java.awt.HeadlessException;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.SQLException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -530,7 +531,7 @@ public class ReportFrame extends javax.swing.JFrame {
             ReportModify.insert(newReport);
             JOptionPane.showMessageDialog(this, "Bạn đã tạo báo cáo mới thành công.");
             showData();
-        } catch (HeadlessException ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Khoảng cách giữa ngày kết thúc và ngày bắt đầu phải lớn hơn hoặc bằng 7 ngày!");
         }
 //        // Tính số ngày giữa hai date

@@ -1,5 +1,6 @@
 package ui;
 
+import dao.CustomerModify;
 import dao.OrderModify;
 import dao.ProductModify;
 import java.awt.event.MouseAdapter;
@@ -468,27 +469,34 @@ public class MainFrame extends javax.swing.JFrame {
                     "Huỷ bỏ", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        String staffId = JOptionPane.showInputDialog(this,
-                "Vui lòng nhập Mã Nhân viên: ",
-                "Xác nhận đơn hàng (2/2)",
-                JOptionPane.PLAIN_MESSAGE);
-
-        if (staffId == null || staffId.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Mã nhân viên là bắt buộc! Đã huỷ đơn hàng.",
-                    "Huỷ bỏ", JOptionPane.WARNING_MESSAGE);
+        // Kiểm tra có tồn tại khách hàng với mã đó trong CSDL không
+        if (!CustomerModify.isCustomerIdExists(customerId)) {
+            JOptionPane.showMessageDialog(this, "Mã khách hàng không tồn tại! Vui lòng nhập chính xác.");
             return;
         }
 
-        String managerId = JOptionPane.showInputDialog(this,
-                "Vui lòng nhập Mã quản lý (có thể bỏ trống): ",
-                "Xác nhận đơn hàng",
-                JOptionPane.PLAIN_MESSAGE);
-
-// Nếu bỏ trống -> lưu NULL
-        if (managerId == null || managerId.trim().isEmpty()) {
-            managerId = null;
-        }
+//        String staffId = JOptionPane.showInputDialog(this,
+//                "Vui lòng nhập Mã Nhân viên: ",
+//                "Xác nhận đơn hàng (2/2)",
+//                JOptionPane.PLAIN_MESSAGE);
+//
+//        if (staffId == null || staffId.trim().isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Mã nhân viên là bắt buộc! Đã huỷ đơn hàng.",
+//                    "Huỷ bỏ", JOptionPane.WARNING_MESSAGE);
+//            return;
+//        }
+//
+//        String managerId = JOptionPane.showInputDialog(this,
+//                "Vui lòng nhập Mã quản lý (có thể bỏ trống): ",
+//                "Xác nhận đơn hàng",
+//                JOptionPane.PLAIN_MESSAGE);
+//
+//// Nếu bỏ trống -> lưu NULL
+//        if (managerId == null || managerId.trim().isEmpty()) {
+//            managerId = null;
+//        }
+        String staffId = "E2513";
+        String managerId = "E2501";
 
         try {
             String orderId = JOptionPane.showInputDialog(this,
@@ -508,6 +516,13 @@ public class MainFrame extends javax.swing.JFrame {
                         "Trùng mã", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            
+            // Kiểm tra định dạng mã đơn hàng chuẩn form chưa
+            if(!orderId.matches("ORD[0-9]{5}")) {
+                JOptionPane.showMessageDialog(this, "Mã đơn hàng phải đúng định ví dụ ORD251001");
+                return;
+            }
+            
             int totalAmount = calculateTotalAmount();
             LocalDateTime now = LocalDateTime.now();
             Timestamp orderDate = Timestamp.valueOf(now);
