@@ -269,10 +269,17 @@ public class ProductFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin sản phẩm.");
             return;
         }
+        int price = 0;
+        try {
+            price = Integer.parseInt(priceTxt.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Giá thành sản phẩm nhập phải là số nguyên dương.");
+            return;
+        }
         if (pos >= 0) {
             datalist.get(pos).setID(idTxt.getText());
             datalist.get(pos).setName(nameTxt.getText());
-            datalist.get(pos).setPrice(Integer.parseInt(priceTxt.getText()));
+            datalist.get(pos).setPrice(price);
             datalist.get(pos).setDescriptions(desTxt.getText());
             
             ProductModify.update(datalist.get(pos));
@@ -281,7 +288,7 @@ public class ProductFrame extends javax.swing.JFrame {
             Product p = new Product(
                 idTxt.getText(),
                 nameTxt.getText(),
-                Integer.parseInt(priceTxt.getText()),
+                price,
                 desTxt.getText()
             );
             ProductModify.insert(p);

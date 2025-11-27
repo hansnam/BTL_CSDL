@@ -10,11 +10,11 @@ public class Customer {
     
     public Customer(String Cusid, String phone, String email, String address) {
         this.customerID = Cusid;
-        this.phone = phone;
-        this.email = email;
+        this.setPhone(phone);
+        this.setEmail(email);
         this.address = address;
     }
-
+    
     public String getCustomerID() {
         return customerID;
     }
@@ -36,10 +36,16 @@ public class Customer {
     }
 
     public void setPhone(String phone) {
+        if (phone == null || !phone.matches("[0-9]{10}")) {
+            throw new IllegalArgumentException("Số điện thoại phải có đúng 10 chữ số");
+        }
         this.phone = phone;
     }
 
     public void setEmail(String email) {
+        if (email == null || !email.matches("[A-Za-z0-9]+@gmail.com")) {
+            throw new IllegalArgumentException("Email không hợp lệ. Ví dụ: example@gmail.com");
+        }
         this.email = email;
     }
 

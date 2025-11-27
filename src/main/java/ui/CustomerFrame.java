@@ -561,37 +561,40 @@ public class CustomerFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_CemailTxtActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        if (ICPos >= 0) {
-            IClist.get(ICPos).setCustomerID(cusIDTxt.getText());
-            IClist.get(ICPos).setICName(nameTxt.getText());
-            IClist.get(ICPos).setICGender(genderTxt.getText());
-            IClist.get(ICPos).setPhone(phoneTxt.getText());
-            IClist.get(ICPos).setEmail(emailTxt.getText());
-            IClist.get(ICPos).setAddress(addressTxt.getText());
-            
-            IndividualCustomerModify.update(IClist.get(ICPos));
-            ICPos = -1;
-        }
-        else {
-            IndividualCus ic = new IndividualCus(
-                cusIDTxt.getText(),
-                nameTxt.getText(),
-                genderTxt.getText(),
-                phoneTxt.getText(),
-                emailTxt.getText(),
-                addressTxt.getText()
+        try {
+            if (ICPos >= 0) {
+                IClist.get(ICPos).setCustomerID(cusIDTxt.getText());
+                IClist.get(ICPos).setICName(nameTxt.getText());
+                IClist.get(ICPos).setICGender(genderTxt.getText());
+                IClist.get(ICPos).setPhone(phoneTxt.getText());
+                IClist.get(ICPos).setEmail(emailTxt.getText());
+                IClist.get(ICPos).setAddress(addressTxt.getText());
 
-            );
-            IndividualCustomerModify.insert(ic);
-            IClist = IndividualCustomerModify.getIndividualCusList(null);
+                IndividualCustomerModify.update(IClist.get(ICPos));
+                ICPos = -1;
+            }
+            else {
+                IndividualCus ic = new IndividualCus(
+                    cusIDTxt.getText(),
+                    nameTxt.getText(),
+                    genderTxt.getText(),
+                    phoneTxt.getText(),
+                    emailTxt.getText(),
+                    addressTxt.getText()
+                );
+                IndividualCustomerModify.insert(ic);
+                IClist = IndividualCustomerModify.getIndividualCusList(null);
+            }
+            showDataIC();
+            cusIDTxt.setText("");
+            nameTxt.setText("");
+            genderTxt.setText("");
+            phoneTxt.setText("");
+            emailTxt.setText("");
+            addressTxt.setText("");
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
-        showDataIC();
-        cusIDTxt.setText("");
-        nameTxt.setText("");
-        genderTxt.setText("");
-        phoneTxt.setText("");
-        emailTxt.setText("");
-        addressTxt.setText("");
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
@@ -604,40 +607,44 @@ public class CustomerFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_searchBtnActionPerformed
 
     private void SaveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveBtnActionPerformed
-        if(CCPos >= 0) {
-            CClist.get(CCPos).setCustomerID(CusIDTxt.getText());
-            CClist.get(CCPos).setCompanyName(companyNameTxt.getText());
-            CClist.get(CCPos).setTaxCode(taxCodeTxt.getText());
-            CClist.get(CCPos).setContactPerson(contactPersonTxt.getText());
-            CClist.get(CCPos).setPhone(CphoneTxt.getText());
-            CClist.get(CCPos).setEmail(CemailTxt.getText());
-            CClist.get(CCPos).setAddress(CaddressTxt.getText());
-            
-            CorporateCustomerModify.update(CClist.get(CCPos));
-            CCPos = -1;
-        }
-        else {
-            CorporateCus cc = new CorporateCus(
-                CusIDTxt.getText(),
-                companyNameTxt.getText(),
-                taxCodeTxt.getText(),
-                contactPersonTxt.getText(),
-                CphoneTxt.getText(),
-                CemailTxt.getText(),
-                CaddressTxt.getText()
+        try {
+            if(CCPos >= 0) {
+                CClist.get(CCPos).setCustomerID(CusIDTxt.getText());
+                CClist.get(CCPos).setCompanyName(companyNameTxt.getText());
+                CClist.get(CCPos).setTaxCode(taxCodeTxt.getText());
+                CClist.get(CCPos).setContactPerson(contactPersonTxt.getText());
+                CClist.get(CCPos).setPhone(CphoneTxt.getText());
+                CClist.get(CCPos).setEmail(CemailTxt.getText());
+                CClist.get(CCPos).setAddress(CaddressTxt.getText());
 
-            );
-            CorporateCustomerModify.insert(cc);
-            CClist = CorporateCustomerModify.getCorporCusList(null);
+                CorporateCustomerModify.update(CClist.get(CCPos));
+                CCPos = -1;
+            }
+            else {
+                CorporateCus cc = new CorporateCus(
+                    CusIDTxt.getText(),
+                    companyNameTxt.getText(),
+                    taxCodeTxt.getText(),
+                    contactPersonTxt.getText(),
+                    CphoneTxt.getText(),
+                    CemailTxt.getText(),
+                    CaddressTxt.getText()
+
+                );
+                CorporateCustomerModify.insert(cc);
+                CClist = CorporateCustomerModify.getCorporCusList(null);
+            }
+            showDataCC();
+            CusIDTxt.setText("");
+            companyNameTxt.setText("");
+            taxCodeTxt.setText("");
+            contactPersonTxt.setText("");
+            CphoneTxt.setText("");
+            CemailTxt.setText("");
+            CaddressTxt.setText("");
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
-        showDataCC();
-        CusIDTxt.setText("");
-        companyNameTxt.setText("");
-        taxCodeTxt.setText("");
-        contactPersonTxt.setText("");
-        CphoneTxt.setText("");
-        CemailTxt.setText("");
-        CaddressTxt.setText("");
     }//GEN-LAST:event_SaveBtnActionPerformed
 
     private void delBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delBtnActionPerformed
