@@ -459,21 +459,21 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
 
-        String customerId = JOptionPane.showInputDialog(this,
-                "Vui lòng nhập mã khách hàng :",
-                "Xác nhận đơn hàng (1/2)",
-                JOptionPane.PLAIN_MESSAGE);
-
-        if (customerId == null || customerId.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Mã khách hàng là bắt buộc! Đã huỷ đơn hàng.",
-                    "Huỷ bỏ", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        // Kiểm tra có tồn tại khách hàng với mã đó trong CSDL không
-        if (!CustomerModify.isCustomerIdExists(customerId)) {
-            JOptionPane.showMessageDialog(this, "Mã khách hàng không tồn tại! Vui lòng nhập chính xác.");
-            return;
-        }
+//        String customerId = JOptionPane.showInputDialog(this,
+//                "Vui lòng nhập mã khách hàng :",
+//                "Xác nhận đơn hàng (1/2)",
+//                JOptionPane.PLAIN_MESSAGE);
+//
+//        if (customerId == null || customerId.trim().isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Mã khách hàng là bắt buộc! Đã huỷ đơn hàng.",
+//                    "Huỷ bỏ", JOptionPane.WARNING_MESSAGE);
+//            return;
+//        }
+//        // Kiểm tra có tồn tại khách hàng với mã đó trong CSDL không
+//        if (!CustomerModify.isCustomerIdExists(customerId)) {
+//            JOptionPane.showMessageDialog(this, "Mã khách hàng không tồn tại! Vui lòng nhập chính xác.");
+//            return;
+//        }
 
 //        String staffId = JOptionPane.showInputDialog(this,
 //                "Vui lòng nhập Mã Nhân viên: ",
@@ -495,6 +495,7 @@ public class MainFrame extends javax.swing.JFrame {
 //        if (managerId == null || managerId.trim().isEmpty()) {
 //            managerId = null;
 //        }
+        String customerId = "C2024005";
         String staffId = "E2513";
         String managerId = "E2501";
 
